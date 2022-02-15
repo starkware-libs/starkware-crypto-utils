@@ -1,7 +1,5 @@
 <!-- logo -->
-<center>
- <h1>StarkWare Crypto Utils</h1>
-</center>
+<h1 align='center'>StarkWare Crypto Utils</h1>
 
 <!-- tag line -->
 <h4 align='center'> Signatures, keys and Pedersen hash on STARK friendly elliptic curve</h4>
@@ -40,10 +38,8 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
 ```javascript
 
 {
-  prime,
-    ec
-:
-  starkEc,
+    prime,
+    ec: starkEc,
     constantPoints,
     shiftPoint,
     maxEcdsaVal, // Data.
@@ -55,21 +51,22 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
     assertInRange,
     getTransferMsgHashWithFee,
     getLimitOrderMsgHashWithFee // Function.
-  asset: {
+    
+    asset: {
     getAssetType,
       getAssetId // Function.
-  }
-,
-  keyDerivation: {
-    StarkExEc: ec.n, // Data.
+    },
+  
+    keyDerivation: {
+      StarkExEc: ec.n, // Data.
       getKeyPairFromPath,
       getAccountPath,
       grindKey // Function.
-  }
-,
-  messageUtils: {
-    assertInRange // Function.
-  }
+    },
+  
+    messageUtils: {
+      assertInRange // Function.
+    }
 }
 ```
 
