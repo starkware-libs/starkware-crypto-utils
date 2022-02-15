@@ -38,10 +38,8 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
 ```javascript
 
 {
-  prime,
-    ec
-:
-  starkEc,
+    prime,
+    ec: starkEc,
     constantPoints,
     shiftPoint,
     maxEcdsaVal, // Data.
@@ -53,21 +51,22 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
     assertInRange,
     getTransferMsgHashWithFee,
     getLimitOrderMsgHashWithFee // Function.
-  asset: {
+    
+    asset: {
     getAssetType,
       getAssetId // Function.
-  }
-,
-  keyDerivation: {
-    StarkExEc: ec.n, // Data.
+    },
+  
+    keyDerivation: {
+      StarkExEc: ec.n, // Data.
       getKeyPairFromPath,
       getAccountPath,
       grindKey // Function.
-  }
-,
-  messageUtils: {
-    assertInRange // Function.
-  }
+    },
+  
+    messageUtils: {
+      assertInRange // Function.
+    }
 }
 ```
 
