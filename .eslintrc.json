@@ -2,8 +2,7 @@
   "env": {
     "commonjs": true,
     "es2021": true,
-    "node": true,
-    "mocha": true
+    "node": true
   },
   "extends": ["prettier", "eslint:recommended"],
   "parserOptions": {

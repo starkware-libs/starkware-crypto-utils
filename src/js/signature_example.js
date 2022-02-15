@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /////////////////////////////////////////////////////////////////////////////////
 // Copyright 2019 StarkWare Industries Ltd.                                    //
 //                                                                             //
