@@ -1,0 +1,86 @@
+{
+  "assetId": {
+    "0x1142460171646987f20c714eda4b92812b22b811f56f27130937c267e29bd9e": {
+      "type": "ETH",
+      "data": {
+        "quantum": "1"
+      }
+    },
+    "0xd5b742d29ab21fdb06ac5c7c460550131c0b30cbc4c911985174c0ea4a92ec": {
+      "type": "ETH",
+      "data": {
+        "quantum": "10000000"
+      }
+    },
+    "0x352386d5b7c781d47ecd404765307d74edc4d43b0490b8e03c71ac7a7429653": {
+      "type": "ERC20",
+      "data": {
+        "quantum": "10000",
+        "tokenAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+      }
+    },
+    "0x2b0ff0c09505bc40f9d1659becf16855a7b2298b010f8a54f4b05325885b40c": {
+      "type": "ERC721",
+      "data": {
+        "tokenId": "4100",
+        "tokenAddress": "0xB18ed4768F87b0fFAb83408014f1caF066b91380"
+      }
+    },
+    "0x40096bd31c51030a7c142ad1291d87e263908fcc94a6bc5dc973b03c93de156": {
+      "type": "MINTABLE_ERC20",
+      "data": {
+        "blob": "Mr and Mrs Dursley, of number four, Privet Drive, were. proud to say that they were perfectly normal, thank you very much. They were the last people you'd expect to be involved in anything strange or mysterious, because they just didn't hold with such nonsense.",
+        "tokenAddress": "0xB1FEFd15fa7bC14e78719f9120a43E54EeBb3d0e"
+      }
+    },
+    "0x400ad1362562d4e4bea5f34ae026dc7dee89e93e8e5b9635de19c1d83c6fcc9": {
+      "type": "MINTABLE_ERC721",
+      "data": {
+        "blob": "Either the well was very deep, or she fell very slowly, for she had plenty of time as she went down to look about her and to wonder what was going to happen next. First, she tried to look down and make out what she was coming to, but it was too dark to see anything; then she looked at the sides of the well, and noticed that they were filled with cupboards and book-shelves; here and there she saw maps and pictures hung upon pegs. She took down a jar from one of the shelves as she passed; it was labelled `ORANGE MARMALADE', but to her great disappointment it was empty: she did not like to drop the jar for fear of killing somebody, so managed to put it into one of the cupboards as she fell past it.",
+        "tokenAddress": "0xB1FEFd15fa7bC14e78719f9120a43E54EeBb3d0e"
+      }
+    }
+  },
+  "assetType": {
+    "0x1142460171646987f20c714eda4b92812b22b811f56f27130937c267e29bd9e": {
+      "type": "ETH",
+      "data": {
+        "quantum": "1"
+      }
+    },
+    "0xd5b742d29ab21fdb06ac5c7c460550131c0b30cbc4c911985174c0ea4a92ec": {
+      "type": "ETH",
+      "data": {
+        "quantum": "10000000"
+      }
+    },
+    "0x352386d5b7c781d47ecd404765307d74edc4d43b0490b8e03c71ac7a7429653": {
+      "type": "ERC20",
+      "data": {
+        "quantum": "10000",
+        "tokenAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+      }
+    },
+    "0x20c0e279ea2e027258d3056f34eca6e47ad9aaa995b896cafcb68d5a65b115b": {
+      "type": "ERC721",
+      "data": {
+        "tokenId": "4100",
+        "tokenAddress": "0xB18ed4768F87b0fFAb83408014f1caF066b91380"
+      }
+    },
+    "0x56e7ef18eacaecb8dec74230021eaa51eb610c06f9a3ab07c8ba6647c70dea": {
+      "type": "MINTABLE_ERC20",
+      "data": {
+        "blob": "Mr and Mrs Dursley, of number four, Privet Drive, were. proud to say that they were perfectly normal, thank you very much. They were the last people you'd expect to be involved in anything strange or mysterious, because they just didn't hold with such nonsense.",
+        "tokenAddress": "0xB1FEFd15fa7bC14e78719f9120a43E54EeBb3d0e"
+      }
+    },
+    "0xdff71c93bbc61d266f578ec07847f841c339df8b30fe66d9ecf7e8789d87b1": {
+      "type": "MINTABLE_ERC721",
+      "data": {
+        "blob": "Either the well was very deep, or she fell very slowly, for she had plenty of time as she went down to look about her and to wonder what was going to happen next. First, she tried to look down and make out what she was coming to, but it was too dark to see anything; then she looked at the sides of the well, and noticed that they were filled with cupboards and book-shelves; here and there she saw maps and pictures hung upon pegs. She took down a jar from one of the shelves as she passed; it was labelled `ORANGE MARMALADE', but to her great disappointment it was empty: she did not like to drop the jar for fear of killing somebody, so managed to put it into one of the cupboards as she fell past it.",
+        "tokenAddress": "0xB1FEFd15fa7bC14e78719f9120a43E54EeBb3d0e"
+      }
+    }
+  }
+}
