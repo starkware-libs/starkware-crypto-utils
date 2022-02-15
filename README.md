@@ -1,7 +1,5 @@
 <!-- logo -->
-<center>
- <h1>StarkWare Crypto Utils</h1>
-</center>
+<h1 align='center'>StarkWare Crypto Utils</h1>
 
 <!-- tag line -->
 <h4 align='center'> Signatures, keys and Pedersen hash on STARK friendly elliptic curve</h4>
