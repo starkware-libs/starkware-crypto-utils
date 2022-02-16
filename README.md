@@ -51,19 +51,19 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
     assertInRange,
     getTransferMsgHashWithFee,
     getLimitOrderMsgHashWithFee // Function.
-    
+
     asset: {
     getAssetType,
       getAssetId // Function.
     },
-  
+
     keyDerivation: {
       StarkExEc: ec.n, // Data.
       getKeyPairFromPath,
       getAccountPath,
       grindKey // Function.
     },
-  
+
     messageUtils: {
       assertInRange // Function.
     }
@@ -72,7 +72,7 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
 
 ## Usage
 
-### Signing a StarkEx Order
+### Signing a StarkEx order
 
 ```javascript
 const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
@@ -146,7 +146,7 @@ const pubKeyDeserialized = starkwareCrypto.ec.keyFromPublic(
 assert(starkwareCrypto.verify(pubKeyDeserialized, msgHash, msgSignature));
 ```
 
-### Signing a StarkEx Order With Fee
+### Signing a StarkEx order with fee
 
 ```javascript
 const privateKey = testData.meta_data.party_a_order.private_key.substring(2);
@@ -167,8 +167,8 @@ assert(
 const {party_a_order: partyAOrder} = testData.settlement;
 const feeInfo = testData.fee_info_user;
 const msgHash = starkwareCrypto.getLimitOrderMsgHashWithFee(
-  partyAOrder.vault_id_sell, // - vault_sell (uint31)
-  partyAOrder.vault_id_buy, // - vault_buy (uint31)
+  partyAOrder.vault_id_sell, // - vault_sell (uint64)
+  partyAOrder.vault_id_buy, // - vault_buy (uint64)
   partyAOrder.amount_sell, // - amount_sell (uint63 decimal str)
   partyAOrder.amount_buy, // - amount_buy (uint63 decimal str)
   partyAOrder.token_sell, // - token_sell (hex str with 0x prefix < prime)
@@ -195,7 +195,7 @@ console.log(partyAOrder);
 console.log('\n');
 ```
 
-### StarkEx Transfer
+### StarkEx transfer
 
 ```javascript
 const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
@@ -238,7 +238,7 @@ console.log(transfer);
 console.log('\n');
 ```
 
-### StarkEx Conditional Transfer
+### StarkEx conditional transfer
 
 ```javascript
 const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
@@ -287,7 +287,7 @@ console.log(transfer);
 console.log('\n');
 ```
 
-### StarkEx Transfer With Fee
+### StarkEx transfer with fee
 
 ```javascript
 const privateKey = testData.meta_data.transfer_order.private_key.substring(2);
@@ -309,13 +309,13 @@ const feeInfo = testData.fee_info_user;
 const msgHash = starkwareCrypto.getTransferMsgHashWithFee(
   transfer.amount, // - amount (uint63 decimal str)
   transfer.nonce, // - nonce (uint31)
-  transfer.sender_vault_id, // - sender_vault_id (uint31)
+  transfer.sender_vault_id, // - sender_vault_id (uint64)
   transfer.token, // - token (hex str with 0x prefix < prime)
-  transfer.target_vault_id, // - target_vault_id (uint31)
+  transfer.target_vault_id, // - target_vault_id (uint64)
   transfer.target_public_key, // - target_public_key (hex str with 0x prefix < prime)
   transfer.expiration_timestamp, // - expiration_timestamp (uint22)
   feeInfo.token_id, // - token (hex str with 0x prefix < prime)
-  feeInfo.source_vault_id, // - fee_source_vault_id (uint31)
+  feeInfo.source_vault_id, // - fee_source_vault_id (uint64)
   feeInfo.fee_limit // - amount (uint63 decimal str)
 );
 
@@ -332,7 +332,7 @@ console.log(transfer);
 console.log('\n');
 ```
 
-### StarkEx Conditional Transfer With Fee
+### StarkEx conditional Transfer with fee
 
 ```javascript
 const privateKey =
@@ -358,13 +358,13 @@ const feeInfo = testData.fee_info_user;
 const msgHash = starkwareCrypto.getTransferMsgHashWithFee(
   transfer.amount, // - amount (uint63 decimal str)
   transfer.nonce, // - nonce (uint31)
-  transfer.sender_vault_id, // - sender_vault_id (uint31)
+  transfer.sender_vault_id, // - sender_vault_id (uint64)
   transfer.token, // - token (hex str with 0x prefix < prime)
-  transfer.target_vault_id, // - target_vault_id (uint31)
+  transfer.target_vault_id, // - target_vault_id (uint64)
   transfer.target_public_key, // - target_public_key (hex str with 0x prefix < prime)
   transfer.expiration_timestamp, // - expiration_timestamp (uint22)
   feeInfo.token_id, // - token (hex str with 0x prefix < prime)
-  feeInfo.source_vault_id, // - fee_source_vault_id (uint31)
+  feeInfo.source_vault_id, // - fee_source_vault_id (uint64)
   feeInfo.fee_limit, // - amount (uint63 decimal str)
   transfer.condition // - condition (hex str with 0x prefix < prime)
 );
@@ -439,6 +439,40 @@ assert(
 // The following is the JSON representation of a settlement:
 console.log('Settlement JSON representation: ');
 console.log(testData.settlement);
+```
+
+## Valid transfer with sender_vault_id=2\*\*63+10
+
+```javascript
+const transfer = testData.transfer_order_2nd_valid_range;
+const feeInfo = testData.fee_info_user;
+
+const msgHash = starkwareCrypto.getTransferMsgHashWithFee(
+  transfer.amount, // - amount (uint63 decimal str)
+  transfer.nonce, // - nonce (uint31)
+  transfer.sender_vault_id, // - sender_vault_id (uint64)
+  transfer.token, // - token (hex str with 0x prefix < prime)
+  transfer.target_vault_id, // - target_vault_id (uint64)
+  transfer.target_public_key, // - target_public_key (hex str with 0x prefix < prime)
+  transfer.expiration_timestamp, // - expiration_timestamp (uint22)
+  feeInfo.token_id, // - token (hex str with 0x prefix < prime)
+  feeInfo.source_vault_id, // - fee_source_vault_id (uint64)
+  feeInfo.fee_limit, // - amount (uint63 decimal str)
+  transfer.condition // - condition (hex str with 0x prefix < prime)
+);
+
+assert(
+  msgHash ===
+    testData.meta_data.transfer_order_2nd_valid_range.message_hash.substring(2),
+  `Got: ${msgHash}. Expected: ` +
+    testData.meta_data.transfer_order_2nd_valid_range.message_hash.substring(2)
+);
+
+// The following is the JSON representation of a transfer with sender_vault_id in the second
+// valid range:
+console.log('Transfer JSON representation: ');
+console.log(transfer);
+console.log('\n');
 ```
 
 ## License

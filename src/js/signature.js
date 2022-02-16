@@ -18,7 +18,11 @@ const BN = require('bn.js');
 const hash = require('hash.js');
 const {curves: eCurves, ec: EllipticCurve} = require('elliptic');
 const assert = require('assert');
-const {assertInRange} = require('./message_utils.js');
+const {
+  assertInRange,
+  assertInMultiRange,
+  Range
+} = require('./message_utils.js');
 const constantPointsHex = require('../config/constant_points.json');
 
 // Equals 2**251 + 17 * 2**192 + 1.
@@ -42,6 +46,10 @@ const fiveBn = new BN('5', 16);
 const twoPow22Bn = new BN('400000', 16);
 const twoPow31Bn = new BN('80000000', 16);
 const twoPow63Bn = new BN('8000000000000000', 16);
+const vaultIDAllowedRanges = [
+  new Range(zeroBn, twoPow31Bn),
+  new Range(twoPow63Bn, twoPow63Bn.add(twoPow31Bn))
+];
 
 // Create a curve with stark curve parameters.
 const starkEc = new EllipticCurve(
@@ -279,7 +287,7 @@ function getLimitOrderMsgHash(
 
  Expected types of fee info params:
  ---------------
- feeVaultId - uint31 (as int)
+ feeVaultId - uint64 (as int)
  feeLimit - uint63 (as decimal string)
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
 */
@@ -312,8 +320,8 @@ function getLimitOrderMsgHashWithFee(
   const feeVaultIdBn = new BN(feeVaultId);
   const feeLimitBn = new BN(feeLimit);
 
-  assertInRange(vaultSellBn, zeroBn, twoPow31Bn);
-  assertInRange(vaultBuyBn, zeroBn, twoPow31Bn);
+  assertInMultiRange(vaultSellBn, vaultIDAllowedRanges);
+  assertInMultiRange(vaultBuyBn, vaultIDAllowedRanges);
   assertInRange(amountSellBn, zeroBn, twoPow63Bn);
   assertInRange(amountBuyBn, zeroBn, twoPow63Bn);
   assertInRange(tokenSellBn, zeroBn, prime);
@@ -321,7 +329,7 @@ function getLimitOrderMsgHashWithFee(
   assertInRange(nonceBn, zeroBn, twoPow31Bn);
   assertInRange(expirationTimestampBn, zeroBn, twoPow22Bn);
   assertInRange(feeTokenBn, zeroBn, prime);
-  assertInRange(feeVaultIdBn, zeroBn, twoPow31Bn);
+  assertInMultiRange(feeVaultIdBn, vaultIDAllowedRanges);
   assertInRange(feeLimitBn, zeroBn, twoPow63Bn);
 
   const instructionType = threeBn;
@@ -414,7 +422,7 @@ function getTransferMsgHash(
 
  Expected types of fee info params:
  ---------------
- feeVaultId - uint31 (as int)
+ feeVaultId - uint64 (as int)
  feeLimit - uint63 (as decimal string)
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
 */
@@ -451,13 +459,13 @@ function getTransferMsgHashWithFee(
 
   assertInRange(amountBn, zeroBn, twoPow63Bn);
   assertInRange(nonceBn, zeroBn, twoPow31Bn);
-  assertInRange(senderVaultIdBn, zeroBn, twoPow31Bn);
+  assertInMultiRange(senderVaultIdBn, vaultIDAllowedRanges);
   assertInRange(tokenBn, zeroBn, prime);
-  assertInRange(receiverVaultIdBn, zeroBn, twoPow31Bn);
+  assertInMultiRange(receiverVaultIdBn, vaultIDAllowedRanges);
   assertInRange(receiverStarkKeyBn, zeroBn, prime);
   assertInRange(expirationTimestampBn, zeroBn, twoPow22Bn);
   assertInRange(feeTokenBn, zeroBn, prime);
-  assertInRange(feeVaultIdBn, zeroBn, twoPow31Bn);
+  assertInMultiRange(feeVaultIdBn, vaultIDAllowedRanges);
   assertInRange(feeLimitBn, zeroBn, twoPow63Bn);
 
   let instructionType = fourBn;
@@ -547,12 +555,14 @@ module.exports = {
   constantPoints,
   shiftPoint,
   maxEcdsaVal, // Data.
+  Range, // Class.
   pedersen,
   getLimitOrderMsgHash,
   getTransferMsgHash,
   sign,
   verify,
   assertInRange,
+  assertInMultiRange,
   getTransferMsgHashWithFee,
   getLimitOrderMsgHashWithFee // Function.
 };

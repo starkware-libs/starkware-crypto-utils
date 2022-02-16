@@ -17,7 +17,7 @@
 const assert = require('assert');
 
 /*
- Asserts input is equal to or greater then lowerBound and lower than upperBound.
+ Asserts input is equal to or greater than lowerBound and lower than upperBound.
  Assert message specifies inputName.
  input, lowerBound, and upperBound should be of type BN.
  inputName should be a string.
@@ -31,6 +31,33 @@ function assertInRange(input, lowerBound, upperBound, inputName = '') {
   );
 }
 
+class Range {
+  constructor(lowerBound, upperBound) {
+    this.lowerBound = lowerBound;
+    this.upperBound = upperBound;
+  }
+}
+
+/*
+ Asserts that the input is within [lowerBound, upperBound) in at least one of the given ranges.
+ Assert message specifies inputName.
+ input should be of type BN.
+ ranges should be a vector of Range objects.
+ inputName should be a string.
+*/
+function assertInMultiRange(input, ranges, inputName = '') {
+  const messageSuffix =
+    inputName === '' ? 'invalid length' : `invalid ${inputName} length`;
+  for (let i = 0; i < ranges.length; i++) {
+    if (input.gte(ranges[i].lowerBound) && input.lt(ranges[i].upperBound)) {
+      return;
+    }
+  }
+  assert(false, `Message not signable, ${messageSuffix}.`);
+}
+
 module.exports = {
-  assertInRange // Function.
+  Range, // Class.
+  assertInRange,
+  assertInMultiRange // Function.
 };
