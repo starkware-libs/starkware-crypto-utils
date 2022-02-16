@@ -53,7 +53,7 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
     getLimitOrderMsgHashWithFee // Function.
     
     asset: {
-    getAssetType,
+      getAssetType,
       getAssetId // Function.
     },
   
