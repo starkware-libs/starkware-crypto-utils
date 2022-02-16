@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 const starkwareCrypto = require(`${SRC_DIR_PATH}/signature.js`);
 const precomputedKeys = require(`${CONFIG_DIR_PATH}/keys_precomputed.json`);
-const rfc6979TestData = require('../config/rfc6979_signature_test_vector.json');
+const signatureTestVector = require('../config/signature_test_vector.json');
 const testData = require('../config/signature_test_data.json');
 const BN = require('bn.js');
 
@@ -218,15 +218,15 @@ describe('Pedersen Hash', () => {
 
 describe('Signature Tests', () => {
   it('should create ecdsa deterministic signatures', () => {
-    const privateKey = rfc6979TestData.private_key.substring(2);
+    const privateKey = signatureTestVector.private_key.substring(2);
     const keyPair = starkwareCrypto.ec.keyFromPrivate(privateKey, 'hex');
     let i = 0;
-    for (; i < rfc6979TestData.messages.length; i++) {
-      const msgHash = rfc6979TestData.messages[i].hash.substring(2);
+    for (; i < signatureTestVector.messages.length; i++) {
+      const msgHash = signatureTestVector.messages[i].hash.substring(2);
       const msgSignature = starkwareCrypto.sign(keyPair, msgHash);
       const {r, s} = msgSignature;
-      expect(r.toString(10)).to.equal(rfc6979TestData.messages[i].r);
-      expect(s.toString(10)).to.equal(rfc6979TestData.messages[i].s);
+      expect(r.toString(10)).to.equal(signatureTestVector.messages[i].r);
+      expect(s.toString(10)).to.equal(signatureTestVector.messages[i].s);
     }
   });
 });
