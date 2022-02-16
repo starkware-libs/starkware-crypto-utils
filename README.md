@@ -30,7 +30,7 @@ yarn add @starkware-industries/starkware-crypto-utils
 ## How to use it
 
 ```js
-const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
+const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 ```
 
 ## API
@@ -53,7 +53,7 @@ const starkwareCryoto = require('@starkware-industries/starkware-crypto-utils');
     getLimitOrderMsgHashWithFee // Function.
 
     asset: {
-    getAssetType,
+      getAssetType,
       getAssetId // Function.
     },
 
