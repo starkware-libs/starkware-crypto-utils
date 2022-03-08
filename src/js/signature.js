@@ -51,7 +51,7 @@ const vaultIDAllowedRanges = [
   new Range(twoPow63Bn, twoPow63Bn.add(twoPow31Bn))
 ];
 
-// Create a curve with stark curve parameters.
+// Create an EC curve with stark curve parameters.
 const starkEc = new EllipticCurve(
   new eCurves.PresetCurve({
     type: 'short',

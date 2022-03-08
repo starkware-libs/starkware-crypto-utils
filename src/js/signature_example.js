@@ -131,7 +131,7 @@ const testData = require('../../test/config/signature_test_data.json');
 
   // The following is the JSON representation of an order:
   console.log('Order With Fee JSON representation: ');
-  // Fee info is added to the order, and will be also be seen in the JSON of Settlement.
+  // Fee info is added to the order, and will also be seen in the JSON of Settlement.
   partyAOrder.fee_info = feeInfo; // eslint-disable-line
   console.log(partyAOrder);
   console.log('\n');
