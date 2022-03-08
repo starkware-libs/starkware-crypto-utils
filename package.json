@@ -1,6 +1,6 @@
 {
   "name": "@starkware-industries/starkware-crypto-utils",
-  "version": "0.0.1-0",
+  "version": "0.0.1",
   "description": "Signatures, keys and Pedersen hash on STARK friendly elliptic curve",
   "keywords": [
     "stark",
