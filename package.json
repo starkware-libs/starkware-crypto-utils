@@ -1,0 +1,67 @@
+{
+  "name": "@starkware-industries/starkware-crypto-utils",
+  "version": "0.0.0",
+  "description": "Signatures, keys and Pedersen hash on STARK friendly elliptic curve",
+  "keywords": [
+    "stark",
+    "signature",
+    "EC",
+    "Elliptic",
+    "curve",
+    "Cryptography"
+  ],
+  "homepage": "https://github.com/starkware-libs/starkware-crypto-utils#readme",
+  "bugs": {
+    "url": "https://github.com/starkware-libs/starkware-crypto-utils/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/starkware-libs/starkware-crypto-utils.git"
+  },
+  "license": "Apache-2.0",
+  "author": "StarkWare Industries Ltd.",
+  "main": "src/js/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "files": [
+    "src/config",
+    "src/js",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "mocha",
+    "pre-release": "standard-version --prerelease --skip.changelog --releaseCommitMessageFormat 'chore(prerelease): {{currentTag}}'",
+    "pushTaggedRelease": "git push --follow-tags --no-verify origin master",
+    "release": "standard-version",
+    "release:dry": "standard-version --dry-run",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write \"**/*.+(ts|js|json|md|html|yml)\""
+  },
+  "dependencies": {
+    "bip39": "^3.0.4",
+    "bn.js": "^4.12.0",
+    "brorand": "^1.1.0",
+    "elliptic": "v6.5.4",
+    "enc-utils": "^3.0.0",
+    "ethereumjs-wallet": "^1.0.2",
+    "hash.js": "^1.1.7",
+    "hmac-drbg": "^1.0.1",
+    "inherits": "^2.0.4",
+    "js-sha3": "^0.8.0",
+    "minimalistic-assert": "^1.0.1",
+    "minimalistic-crypto-utils": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "eslint": "^8.8.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "^8.4.0",
+    "prettier": "^2.5.1",
+    "standard-version": "^9.3.2"
+  }
+}
