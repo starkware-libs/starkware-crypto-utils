@@ -59,6 +59,8 @@ const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 
     keyDerivation: {
       StarkExEc: ec.n, // Data.
+      getPrivateKeyFromEthSignature,
+      privateToStarkKey, 
       getKeyPairFromPath,
       getAccountPath,
       grindKey // Function.

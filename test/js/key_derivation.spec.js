@@ -3,8 +3,11 @@ const {
   StarkExEc,
   getKeyPairFromPath,
   getAccountPath,
+  privateToStarkKey,
+  getPrivateKeyFromEthSignature,
   grindKey
 } = require(`${SRC_DIR_PATH}/key_derivation`);
+const precomputedKeys = require(`${CONFIG_DIR_PATH}/keys_precomputed.json`);
 
 const layer = 'starkex';
 const application = 'starkdeployement';
@@ -45,6 +48,26 @@ describe('Key grinding', () => {
       '86F3E7293141F20A8BAFF320E8EE4ACCB9D4A4BF2B4D295E8CEE784DB46E0519';
     expect(grindKey(privateKey, StarkExEc)).to.equal(
       '5c8c8683596c732541a59e03007b2d30dbbbb873556fe65b5fb63c16688f941'
+    );
+  });
+});
+
+describe('Private to stark key', () => {
+  it('should derive public stark key from private correctly', () => {
+    Object.entries(precomputedKeys).forEach(([privKey, expectedPubKey]) => {
+      const pubKey = '0x' + privateToStarkKey(privKey);
+      expect(pubKey).to.equal(expectedPubKey);
+    });
+  });
+});
+
+describe('Private stark key from eth signature', () => {
+  it('should derive private stark key from eth signature correctly', () => {
+    const ethSignature =
+      '0x21fbf0696d5e0aa2ef41a2b4ffb623bcaf070461d61cf7251c74161f82fec3a43' +
+      '70854bc0a34b3ab487c1bc021cd318c734c51ae29374f2beb0e6f2dd49b4bf41c';
+    expect(getPrivateKeyFromEthSignature(ethSignature)).to.equal(
+      '766f11e90cd7c7b43085b56da35c781f8c067ac0d578eabdceebc4886435bda'
     );
   });
 });
