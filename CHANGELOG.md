@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### 0.0.1 (2022-03-08)
 
-
 ### Features
 
-* init project ([9759ffa](https://github.com/starkware-libs/starkware-crypto-utils/commit/9759ffac52538345524c90a784e653c95d8899f5))
+- init project ([9759ffa](https://github.com/starkware-libs/starkware-crypto-utils/commit/9759ffac52538345524c90a784e653c95d8899f5))

@@ -23,21 +23,6 @@ function randomString(characters, length) {
   return result;
 }
 
-describe('Key computation', () => {
-  it('should derive public key correctly', () => {
-    for (const privKey in precomputedKeys) {
-      if ({}.hasOwnProperty.call(precomputedKeys, privKey)) {
-        // Drop the '0x' prefix.
-        const fixedPrivKey = privKey.substring(2);
-        const keyPair = starkwareCrypto.ec.keyFromPrivate(fixedPrivKey, 'hex');
-        const pubKey = '0x' + keyPair.getPublic().getX().toString('hex');
-        const expectedPubKey = precomputedKeys[privKey];
-        expect(expectedPubKey).to.equal(pubKey);
-      }
-    }
-  });
-});
-
 describe('Verify', () => {
   // Generate BN of 1.
   const oneBn = new BN('1', 16);

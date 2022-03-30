@@ -20,6 +20,10 @@ const encUtils = require('enc-utils');
 const BN = require('bn.js');
 const hash = require('hash.js');
 const {ec} = require('./signature.js');
+const assert = require('assert');
+
+const ETH_SIGNATURE_LENGTH = 130;
+const STARK_PRIVATE_KEY_LENGTH = 63;
 
 /*
  Returns an integer from a given section of bits out of a hex string.
@@ -32,6 +36,38 @@ function getIntFromBits(hex, start, end = undefined) {
   const bits = bin.slice(start, end);
   const int = encUtils.binaryToNumber(bits);
   return int;
+}
+
+/*
+ Returns true if the given string is a hex string of length hexLength, and false otherwise.
+*/
+function isHexOfLength(hex, hexLength) {
+  const regex = new RegExp('^[0-9a-fA-F]{' + hexLength + '}$');
+  return regex.test(hex);
+}
+
+/*
+ Returns a private stark key based on a given Eth signature.
+ The given signature should be a 130 character hex string produced by the user signing a
+ predetermined message in order to guarantee getting the same private key each time it is invoked.
+*/
+function getPrivateKeyFromEthSignature(ethSignature) {
+  const ethSignatureFixed = ethSignature.replace(/^0x/, '');
+  assert(isHexOfLength(ethSignatureFixed, ETH_SIGNATURE_LENGTH));
+  const r = ethSignatureFixed.substring(0, 64);
+  return grindKey(r, ec.n);
+}
+
+/*
+ Returns a public stark key given the private key.
+ The private key should be a random hex string of length up to 63 characters.
+*/
+function privateToStarkKey(privateKey) {
+  const privateKeyFixed = privateKey.replace(/^0x/, '');
+  assert(privateKeyFixed.length <= STARK_PRIVATE_KEY_LENGTH);
+  assert(isHexOfLength(privateKeyFixed, privateKeyFixed.length));
+  const keyPair = ec.keyFromPrivate(privateKeyFixed, 'hex');
+  return keyPair.getPublic().getX().toJSON();
 }
 
 /*
@@ -117,7 +153,10 @@ function hashKeyWithIndex(key, index) {
 
 module.exports = {
   StarkExEc: ec.n, // Data.
+  getPrivateKeyFromEthSignature,
+  privateToStarkKey,
   getKeyPairFromPath,
   getAccountPath,
-  grindKey // Function.
+  grindKey
+  // Function.
 };
