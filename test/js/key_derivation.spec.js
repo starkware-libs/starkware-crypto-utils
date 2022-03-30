@@ -3,6 +3,8 @@ const {
   StarkExEc,
   getKeyPairFromPath,
   getAccountPath,
+  privateToStarkKey,
+  getPrivateKeyFromEthSignature,
   grindKey
 } = require(`${SRC_DIR_PATH}/key_derivation`);
 const precomputedKeys = require(`${CONFIG_DIR_PATH}/keys_precomputed.json`);

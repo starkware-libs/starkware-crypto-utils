@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 const starkwareCrypto = require(`${SRC_DIR_PATH}/signature.js`);
-const precomputedKeys = require(`${CONFIG_DIR_PATH}/keys_precomputed.json`);
 const rfc6979TestData = require('../config/rfc6979_signature_test_vector.json');
 const testData = require('../config/signature_test_data.json');
 const BN = require('bn.js');
