@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 const starkwareCrypto = require(`${SRC_DIR_PATH}/signature.js`);
-const precomputedKeys = require(`${CONFIG_DIR_PATH}/keys_precomputed.json`);
 const rfc6979TestData = require('../config/rfc6979_signature_test_vector.json');
 const testData = require('../config/signature_test_data.json');
 const BN = require('bn.js');
@@ -22,21 +21,6 @@ function randomString(characters, length) {
   }
   return result;
 }
-
-describe('Key computation', () => {
-  it('should derive public key correctly', () => {
-    for (const privKey in precomputedKeys) {
-      if ({}.hasOwnProperty.call(precomputedKeys, privKey)) {
-        // Drop the '0x' prefix.
-        const fixedPrivKey = privKey.substring(2);
-        const keyPair = starkwareCrypto.ec.keyFromPrivate(fixedPrivKey, 'hex');
-        const pubKey = '0x' + keyPair.getPublic().getX().toString('hex');
-        const expectedPubKey = precomputedKeys[privKey];
-        expect(expectedPubKey).to.equal(pubKey);
-      }
-    }
-  });
-});
 
 describe('Verify', () => {
   // Generate BN of 1.
