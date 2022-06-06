@@ -194,5 +194,6 @@ function blobToBlobHash(blob) {
 
 module.exports = {
   getAssetType,
+  getAssetSelector,
   getAssetId // Function.
 };
