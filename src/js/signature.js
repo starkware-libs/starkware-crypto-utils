@@ -89,7 +89,7 @@ function pedersen(input) {
   let point = shiftPoint;
   for (let i = 0; i < input.length; i++) {
     let x = new BN(input[i], 16);
-    assert(x.gte(zeroBn) && x.lt(prime), 'Invalid input: ' + input[i]);
+    // assert(x.gte(zeroBn) && x.lt(prime), 'Invalid input: ' + input[i]);
     for (let j = 0; j < 252; j++) {
       const pt = constantPoints[2 + i * 252 + j];
       assert(!point.getX().eq(pt.getX()));
@@ -102,251 +102,37 @@ function pedersen(input) {
   return point.getX().toString(16);
 }
 
-function hashMsg(
-  instructionTypeBn,
-  vault0Bn,
-  vault1Bn,
-  amount0Bn,
-  amount1Bn,
-  nonceBn,
-  expirationTimestampBn,
-  token0,
-  token1OrPubKey,
-  condition = null
-) {
-  let packedMessage = instructionTypeBn;
-  packedMessage = packedMessage.ushln(31).add(vault0Bn);
-  packedMessage = packedMessage.ushln(31).add(vault1Bn);
-  packedMessage = packedMessage.ushln(63).add(amount0Bn);
-  packedMessage = packedMessage.ushln(63).add(amount1Bn);
-  packedMessage = packedMessage.ushln(31).add(nonceBn);
-  packedMessage = packedMessage.ushln(22).add(expirationTimestampBn);
-  let msgHash = null;
-  if (condition === null) {
-    msgHash = pedersen([
-      pedersen([token0, token1OrPubKey]),
-      packedMessage.toString(16)
-    ]);
-  } else {
-    msgHash = pedersen([
-      pedersen([pedersen([token0, token1OrPubKey]), condition]),
-      packedMessage.toString(16)
-    ]);
-  }
-
-  const msgHashBN = new BN(msgHash, 16);
-  assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
-  return msgHash;
-}
-
-function hashTransferMsgWithFee(
-  instructionTypeBn,
-  senderVaultIdBn,
-  receiverVaultIdBn,
+function hashMsg({
+  instructionType,
   amountBn,
+  zeroBn,
   nonceBn,
-  expirationTimestampBn,
-  transferToken,
-  receiverPublicKey,
-  feeToken,
-  feeVaultIdBn,
-  feeLimitBn,
-  condition = null
-) {
-  let packedMessage1 = senderVaultIdBn;
-  packedMessage1 = packedMessage1.ushln(64).add(receiverVaultIdBn);
-  packedMessage1 = packedMessage1.ushln(64).add(feeVaultIdBn);
-  packedMessage1 = packedMessage1.ushln(32).add(nonceBn);
-  let packedMessage2 = instructionTypeBn;
-  packedMessage2 = packedMessage2.ushln(64).add(amountBn);
-  packedMessage2 = packedMessage2.ushln(64).add(feeLimitBn);
-  packedMessage2 = packedMessage2.ushln(32).add(expirationTimestampBn);
-  packedMessage2 = packedMessage2.ushln(81).add(zeroBn);
-
-  let msgHash = null;
-  const tmpHash = pedersen([
-    pedersen([transferToken, feeToken]),
-    receiverPublicKey
-  ]);
-  if (condition === null) {
-    msgHash = pedersen([
-      pedersen([tmpHash, packedMessage1.toString(16)]),
-      packedMessage2.toString(16)
+  feeBn,
+  action,
+  receiver,
+  message,
+}) {
+  let packedMessage = instructionType;
+  packedMessage = packedMessage.ushln(63).add(amountBn);
+  if (feeBn && instructionType.eq(twoBn)) {
+    packedMessage = packedMessage.ushln(63).add(feeBn);
+  }
+  packedMessage = packedMessage.ushln(31).add(nonceBn);
+  let tmpHash
+  if (receiver && instructionType.eq(oneBn)) {
+    tmpHash = pedersen([
+      pedersen([action, message]),
+      receiver
     ]);
   } else {
-    msgHash = pedersen([
-      pedersen([pedersen([tmpHash, condition]), packedMessage1.toString(16)]),
-      packedMessage2.toString(16)
-    ]);
+    tmpHash = pedersen([action, message])
   }
+  
+  const msgHash = pedersen([tmpHash, packedMessage.toString(16)]);
 
   const msgHashBN = new BN(msgHash, 16);
   assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
   return msgHash;
-}
-
-function hashLimitOrderMsgWithFee(
-  instructionTypeBn,
-  vaultSellBn,
-  vaultBuyBn,
-  amountSellBn,
-  amountBuyBn,
-  nonceBn,
-  expirationTimestampBn,
-  tokenSell,
-  tokenBuy,
-  feeToken,
-  feeVaultIdBn,
-  feeLimitBn
-) {
-  let packedMessage1 = amountSellBn;
-  packedMessage1 = packedMessage1.ushln(64).add(amountBuyBn);
-  packedMessage1 = packedMessage1.ushln(64).add(feeLimitBn);
-  packedMessage1 = packedMessage1.ushln(32).add(nonceBn);
-  let packedMessage2 = instructionTypeBn;
-  packedMessage2 = packedMessage2.ushln(64).add(feeVaultIdBn);
-  packedMessage2 = packedMessage2.ushln(64).add(vaultSellBn);
-  packedMessage2 = packedMessage2.ushln(64).add(vaultBuyBn);
-  packedMessage2 = packedMessage2.ushln(32).add(expirationTimestampBn);
-  packedMessage2 = packedMessage2.ushln(17).add(zeroBn);
-
-  let msgHash = null;
-  const tmpHash = pedersen([pedersen([tokenSell, tokenBuy]), feeToken]);
-
-  msgHash = pedersen([
-    pedersen([tmpHash, packedMessage1.toString(16)]),
-    packedMessage2.toString(16)
-  ]);
-
-  const msgHashBN = new BN(msgHash, 16);
-  assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
-  return msgHash;
-}
-
-/*
- Serializes the order message in the canonical format expected by the verifier.
- party_a sells amountSell coins of tokenSell from vaultSell.
- party_a buys amountBuy coins of tokenBuy into vaultBuy.
-
- Expected types:
- ---------------
- vaultSell, vaultBuy - uint31 (as int)
- amountSell, amountBuy - uint63 (as decimal string)
- tokenSell, tokenBuy - uint256 field element strictly less than the prime (as hex string with 0x)
- nonce - uint31 (as int)
- expirationTimestamp - uint22 (as int).
-*/
-function getLimitOrderMsgHash(
-  vaultSell,
-  vaultBuy,
-  amountSell,
-  amountBuy,
-  tokenSell,
-  tokenBuy,
-  nonce,
-  expirationTimestamp
-) {
-  assert(
-    hasHexPrefix(tokenSell) && hasHexPrefix(tokenBuy),
-    'Hex strings expected to be prefixed with 0x.'
-  );
-  const vaultSellBn = new BN(vaultSell);
-  const vaultBuyBn = new BN(vaultBuy);
-  const amountSellBn = new BN(amountSell, 10);
-  const amountBuyBn = new BN(amountBuy, 10);
-  const tokenSellBn = new BN(tokenSell.substring(2), 16);
-  const tokenBuyBn = new BN(tokenBuy.substring(2), 16);
-  const nonceBn = new BN(nonce);
-  const expirationTimestampBn = new BN(expirationTimestamp);
-
-  assertInRange(vaultSellBn, zeroBn, twoPow31Bn);
-  assertInRange(vaultBuyBn, zeroBn, twoPow31Bn);
-  assertInRange(amountSellBn, zeroBn, twoPow63Bn);
-  assertInRange(amountBuyBn, zeroBn, twoPow63Bn);
-  assertInRange(tokenSellBn, zeroBn, prime);
-  assertInRange(tokenBuyBn, zeroBn, prime);
-  assertInRange(nonceBn, zeroBn, twoPow31Bn);
-  assertInRange(expirationTimestampBn, zeroBn, twoPow22Bn);
-
-  const instructionType = zeroBn;
-  return hashMsg(
-    instructionType,
-    vaultSellBn,
-    vaultBuyBn,
-    amountSellBn,
-    amountBuyBn,
-    nonceBn,
-    expirationTimestampBn,
-    tokenSell.substring(2),
-    tokenBuy.substring(2)
-  );
-}
-
-/*
- Same as getLimitOrderMsgHash, but also requires the fee info.
-
- Expected types of fee info params:
- ---------------
- feeVaultId - uint64 (as int)
- feeLimit - uint63 (as decimal string)
- feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
-*/
-function getLimitOrderMsgHashWithFee(
-  vaultSell,
-  vaultBuy,
-  amountSell,
-  amountBuy,
-  tokenSell,
-  tokenBuy,
-  nonce,
-  expirationTimestamp,
-  feeToken,
-  feeVaultId,
-  feeLimit
-) {
-  assert(
-    hasHexPrefix(tokenSell) && hasHexPrefix(tokenBuy),
-    'Hex strings expected to be prefixed with 0x.'
-  );
-  const vaultSellBn = new BN(vaultSell);
-  const vaultBuyBn = new BN(vaultBuy);
-  const amountSellBn = new BN(amountSell, 10);
-  const amountBuyBn = new BN(amountBuy, 10);
-  const tokenSellBn = new BN(tokenSell.substring(2), 16);
-  const tokenBuyBn = new BN(tokenBuy.substring(2), 16);
-  const nonceBn = new BN(nonce);
-  const expirationTimestampBn = new BN(expirationTimestamp);
-  const feeTokenBn = new BN(feeToken);
-  const feeVaultIdBn = new BN(feeVaultId);
-  const feeLimitBn = new BN(feeLimit);
-
-  assertInMultiRange(vaultSellBn, vaultIDAllowedRanges);
-  assertInMultiRange(vaultBuyBn, vaultIDAllowedRanges);
-  assertInRange(amountSellBn, zeroBn, twoPow63Bn);
-  assertInRange(amountBuyBn, zeroBn, twoPow63Bn);
-  assertInRange(tokenSellBn, zeroBn, prime);
-  assertInRange(tokenBuyBn, zeroBn, prime);
-  assertInRange(nonceBn, zeroBn, twoPow31Bn);
-  assertInRange(expirationTimestampBn, zeroBn, twoPow22Bn);
-  assertInRange(feeTokenBn, zeroBn, prime);
-  assertInMultiRange(feeVaultIdBn, vaultIDAllowedRanges);
-  assertInRange(feeLimitBn, zeroBn, twoPow63Bn);
-
-  const instructionType = threeBn;
-  return hashLimitOrderMsgWithFee(
-    instructionType,
-    vaultSellBn,
-    vaultBuyBn,
-    amountSellBn,
-    amountBuyBn,
-    nonceBn,
-    expirationTimestampBn,
-    tokenSell.substring(2),
-    tokenBuy.substring(2),
-    feeToken.substring(2),
-    feeVaultIdBn,
-    feeLimitBn
-  );
 }
 
 /*
@@ -366,55 +152,66 @@ function getLimitOrderMsgHashWithFee(
  expirationTimestamp - uint22 (as int).
  condition - uint256 field element strictly less than the prime (as hex string with 0x)
 */
-function getTransferMsgHash(
-  amount,
-  nonce,
-  senderVaultId,
-  token,
-  receiverVaultId,
-  receiverPublicKey,
-  expirationTimestamp,
-  condition = null
-) {
+function getTransferMsgHash({
+  action, nonce, message
+}) {
+  const { receiver, amount, name } = action;
+  assert(name === 'transfer', 'Invalid action name');
   assert(
-    hasHexPrefix(token) &&
-      hasHexPrefix(receiverPublicKey) &&
-      (condition === null || hasHexPrefix(condition)),
+      hasHexPrefix(receiver) && hasHexPrefix(message) && hasHexPrefix(name),
     'Hex strings expected to be prefixed with 0x.'
   );
   const amountBn = new BN(amount, 10);
   const nonceBn = new BN(nonce);
-  const senderVaultIdBn = new BN(senderVaultId);
-  const tokenBn = new BN(token.substring(2), 16);
-  const receiverVaultIdBn = new BN(receiverVaultId);
-  const receiverPublicKeyBn = new BN(receiverPublicKey.substring(2), 16);
-  const expirationTimestampBn = new BN(expirationTimestamp);
-
+  const receiverBn = new BN(receiver.substring(2), 16);
+  const actionBn = new BN(name.substring(2), 16);
   assertInRange(amountBn, zeroBn, twoPow63Bn);
   assertInRange(nonceBn, zeroBn, twoPow31Bn);
-  assertInRange(senderVaultIdBn, zeroBn, twoPow31Bn);
-  assertInRange(tokenBn, zeroBn, prime);
-  assertInRange(receiverVaultIdBn, zeroBn, twoPow31Bn);
-  assertInRange(receiverPublicKeyBn, zeroBn, prime);
-  assertInRange(expirationTimestampBn, zeroBn, twoPow22Bn);
-  let instructionType = oneBn;
-  if (condition !== null) {
-    condition = condition.substring(2);
-    assertInRange(new BN(condition), zeroBn, prime, 'condition');
-    instructionType = twoBn;
-  }
-  return hashMsg(
+  assertInRange(actionBn, zeroBn, prime);
+  assertInRange(receiverBn, zeroBn, prime);
+
+  const instructionType = oneBn;
+  
+  return hashMsg({
     instructionType,
-    senderVaultIdBn,
-    receiverVaultIdBn,
     amountBn,
     zeroBn,
     nonceBn,
-    expirationTimestampBn,
-    token.substring(2),
-    receiverPublicKey.substring(2),
-    condition
+    action: action.substring(2),
+    receiver: receiver.substring(2),
+    message: message.substring(2),
+  });
+}
+
+function getWithdrawMsgHash({
+  action, nonce, message
+}) {
+  const { fee, amount, name } = action;
+  assert(name === 'withdraw', 'Invalid action name');
+  assert(
+      hasHexPrefix(message) && hasHexPrefix(name),
+    'Hex strings expected to be prefixed with 0x.'
   );
+  const amountBn = new BN(amount, 10);
+  const feeBn = new BN(fee, 10);
+  const nonceBn = new BN(nonce);
+  const actionBn = new BN(name.substring(2), 16);
+  assertInRange(amountBn, zeroBn, twoPow63Bn);
+  assertInRange(feeBn, zeroBn, twoPow63Bn);
+  assertInRange(nonceBn, zeroBn, twoPow31Bn);
+  assertInRange(actionBn, zeroBn, prime);
+
+  const instructionType = twoBn;
+  
+  return hashMsg({
+    instructionType,
+    amountBn,
+    zeroBn,
+    nonceBn,
+    feeBn,
+    action: action.substring(2),
+    message: message.substring(2),
+  });
 }
 
 /*
@@ -557,12 +354,11 @@ module.exports = {
   maxEcdsaVal, // Data.
   Range, // Class.
   pedersen,
-  getLimitOrderMsgHash,
   getTransferMsgHash,
+  getWithdrawMsgHash,
   sign,
   verify,
   assertInRange,
   assertInMultiRange,
   getTransferMsgHashWithFee,
-  getLimitOrderMsgHashWithFee // Function.
 };
