@@ -14,16 +14,16 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-const {hdkey} = require('ethereumjs-wallet');
-const bip39 = require('bip39');
-const encUtils = require('enc-utils');
-const BN = require('bn.js');
-const hash = require('hash.js');
-const {ec} = require('./signature.js');
-const assert = require('assert');
+const { hdkey } = require("ethereumjs-wallet");
+const bip39 = require("bip39");
+const encUtils = require("enc-utils");
+const BN = require("bn.js");
+const hash = require("hash.js");
+const { ec } = require("./signature.js");
+const assert = require("assert");
 
-const ETH_SIGNATURE_LENGTH = 130;
-const STARK_PRIVATE_KEY_LENGTH = 63;
+const ETH_SIGNATURE_LENGTH: number = 130;
+const STARK_PRIVATE_KEY_LENGTH: number = 63;
 
 /*
  Returns an integer from a given section of bits out of a hex string.
@@ -38,11 +38,11 @@ function getIntFromBits(hex, start, end = undefined) {
   return int;
 }
 
-/*
+/**
  Returns true if the given string is a hex string of length hexLength, and false otherwise.
-*/
-function isHexOfLength(hex, hexLength) {
-  const regex = new RegExp('^[0-9a-fA-F]{' + hexLength + '}$');
+ */
+function isHexOfLength(hex: string, hexLength: number): boolean {
+  const regex = new RegExp("^[0-9a-fA-F]{" + hexLength + "}$");
   return regex.test(hex);
 }
 
@@ -52,7 +52,7 @@ function isHexOfLength(hex, hexLength) {
  predetermined message in order to guarantee getting the same private key each time it is invoked.
 */
 function getPrivateKeyFromEthSignature(ethSignature) {
-  const ethSignatureFixed = ethSignature.replace(/^0x/, '');
+  const ethSignatureFixed = ethSignature.replace(/^0x/, "");
   assert(isHexOfLength(ethSignatureFixed, ETH_SIGNATURE_LENGTH));
   const r = ethSignatureFixed.substring(0, 64);
   return grindKey(r, ec.n);
@@ -63,10 +63,10 @@ function getPrivateKeyFromEthSignature(ethSignature) {
  The private key should be a random hex string of length up to 63 characters.
 */
 function privateToStarkKey(privateKey) {
-  const privateKeyFixed = privateKey.replace(/^0x/, '');
+  const privateKeyFixed = privateKey.replace(/^0x/, "");
   assert(privateKeyFixed.length <= STARK_PRIVATE_KEY_LENGTH);
   assert(isHexOfLength(privateKeyFixed, privateKeyFixed.length));
-  const keyPair = ec.keyFromPrivate(privateKeyFixed, 'hex');
+  const keyPair = ec.keyFromPrivate(privateKeyFixed, "hex");
   return keyPair.getPublic().getX().toJSON();
 }
 
@@ -79,12 +79,12 @@ function privateToStarkKey(privateKey) {
 function getKeyPairFromPath(mnemonic, path) {
   const seed = bip39.mnemonicToSeedSync(mnemonic);
   const keySeed = hdkey
-    .fromMasterSeed(seed, 'hex')
+    .fromMasterSeed(seed, "hex")
     .derivePath(path)
     .getWallet()
     .getPrivateKeyString();
   const starkEcOrder = ec.n;
-  return ec.keyFromPrivate(grindKey(keySeed, starkEcOrder), 'hex');
+  return ec.keyFromPrivate(grindKey(keySeed, starkEcOrder), "hex");
 }
 
 /*
@@ -97,8 +97,8 @@ function getKeyPairFromPath(mnemonic, path) {
  index represents an index of the possible associated wallets derived from the seed.
 */
 function getAccountPath(layer, application, ethereumAddress, index) {
-  const layerHash = hash.sha256().update(layer).digest('hex');
-  const applicationHash = hash.sha256().update(application).digest('hex');
+  const layerHash = hash.sha256().update(layer).digest("hex");
+  const applicationHash = hash.sha256().update(application).digest("hex");
   const layerInt = getIntFromBits(layerHash, -31);
   const applicationInt = getIntFromBits(applicationHash, -31);
   // Draws the 31 LSBs of the eth address.
@@ -118,7 +118,7 @@ function getAccountPath(layer, application, ethereumAddress, index) {
 */
 function grindKey(keySeed, keyValLimit) {
   const sha256EcMaxDigest = new BN(
-    '1 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000',
+    "1 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000",
     16
   );
   const maxAllowedVal = sha256EcMaxDigest.sub(
@@ -130,10 +130,10 @@ function grindKey(keySeed, keyValLimit) {
   // Make sure the produced key is devided by the Stark EC order, and falls within the range
   // [0, maxAllowedVal).
   while (!key.lt(maxAllowedVal)) {
-    key = hashKeyWithIndex(keySeed.toString('hex'), i);
+    key = hashKeyWithIndex(keySeed.toString("hex"), i);
     i++;
   }
-  return key.umod(keyValLimit).toString('hex');
+  return key.umod(keyValLimit).toString("hex");
 }
 
 function hashKeyWithIndex(key, index) {
@@ -143,10 +143,10 @@ function hashKeyWithIndex(key, index) {
       .update(
         encUtils.hexToBuffer(
           encUtils.removeHexPrefix(key) +
-            encUtils.sanitizeBytes(encUtils.numberToHex(index), 2)
+          encUtils.sanitizeBytes(encUtils.numberToHex(index), 2)
         )
       )
-      .digest('hex'),
+      .digest("hex"),
     16
   );
 }

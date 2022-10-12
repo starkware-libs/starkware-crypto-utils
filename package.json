@@ -20,7 +20,8 @@
   },
   "license": "Apache-2.0",
   "author": "StarkWare Industries Ltd.",
-  "main": "src/js/index.js",
+  "main": "dist/src/js/index.ts",
+  "types": "dist/src/js/index.d.ts",
   "directories": {
     "test": "test"
   },
@@ -32,6 +33,9 @@
     "CHANGELOG.md"
   ],
   "scripts": {
+    "clean": "rm -rf ./dist",
+    "prebuild": "npm run clean",
+    "build": "tsc --build",
     "test": "mocha",
     "pre-release": "standard-version --prerelease --skip.changelog --releaseCommitMessageFormat 'chore(prerelease): {{currentTag}}'",
     "pushTaggedRelease": "git push --follow-tags --no-verify origin master",
@@ -39,6 +43,7 @@
     "release:dry": "standard-version --dry-run",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "docs:generate": "typedoc",
     "format": "prettier --write \"**/*.+(ts|js|json|md|html|yml)\""
   },
   "dependencies": {
@@ -56,12 +61,15 @@
     "minimalistic-crypto-utils": "^1.0.1"
   },
   "devDependencies": {
+    "@types/bn.js": "^5.1.1",
     "chai": "^4.3.6",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^9.2.2",
     "prettier": "^2.5.1",
-    "standard-version": "^9.3.2"
+    "standard-version": "^9.3.2",
+    "typedoc": "^0.23.16",
+    "typescript": "^4.8.4"
   }
 }

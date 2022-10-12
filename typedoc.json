@@ -1,0 +1,5 @@
+{
+  "entryPoints": ["./src/js/message_utils.ts"],
+  "name": "StarkWare Crypto Utils",
+  "includeVersion": true
+}
