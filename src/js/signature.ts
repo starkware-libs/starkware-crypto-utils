@@ -14,16 +14,19 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-const BN = require('bn.js');
-const hash = require('hash.js');
-const {curves: eCurves, ec: EllipticCurve} = require('elliptic');
-const assert = require('assert');
-const {
+import BN from "bn.js";
+import hash from "hash.js";
+import * as elliptic from "elliptic";
+import assert from "assert";
+import {
   assertInRange,
   assertInMultiRange,
   Range
-} = require('./message_utils.js');
-const constantPointsHex = require('../config/constant_points.json');
+} from "./message_utils.js";
+import * as constantPointsHex from "../config/constant_points.json";
+
+const eCurves = elliptic.curves;
+const EllipticCurve = elliptic.ec
 
 // Equals 2**251 + 17 * 2**192 + 1.
 const prime = new BN(
@@ -71,21 +74,21 @@ const constantPoints = constantPointsHex.map(coords =>
 );
 const shiftPoint = constantPoints[0];
 
-/*
+/**
   Checks that the string str start with '0x'.
 */
-function hasHexPrefix(str) {
+function hasHexPrefix(str: string) {
   return str.substring(0, 2) === '0x';
 }
 
-/*
+/**
  Full specification of the hash function can be found here:
    https://starkware.co/starkex/docs/signatures.html#pedersen-hash-function
  shiftPoint was added for technical reasons to make sure the zero point on the elliptic curve does
  not appear during the computation. constantPoints are multiples by powers of 2 of the constant
  points defined in the documentation.
 */
-function pedersen(input) {
+function pedersen(input: Array<string>) {
   let point = shiftPoint;
   for (let i = 0; i < input.length; i++) {
     let x = new BN(input[i], 16);
@@ -103,16 +106,16 @@ function pedersen(input) {
 }
 
 function hashMsg(
-  instructionTypeBn,
-  vault0Bn,
-  vault1Bn,
-  amount0Bn,
-  amount1Bn,
-  nonceBn,
-  expirationTimestampBn,
-  token0,
-  token1OrPubKey,
-  condition = null
+  instructionTypeBn: BN,
+  vault0Bn: BN,
+  vault1Bn: BN,
+  amount0Bn: BN,
+  amount1Bn: BN,
+  nonceBn: BN,
+  expirationTimestampBn: BN,
+  token0: string,
+  token1OrPubKey: string,
+  condition: string | null = null
 ) {
   let packedMessage = instructionTypeBn;
   packedMessage = packedMessage.ushln(31).add(vault0Bn);
@@ -140,18 +143,18 @@ function hashMsg(
 }
 
 function hashTransferMsgWithFee(
-  instructionTypeBn,
-  senderVaultIdBn,
-  receiverVaultIdBn,
-  amountBn,
-  nonceBn,
-  expirationTimestampBn,
-  transferToken,
-  receiverPublicKey,
-  feeToken,
-  feeVaultIdBn,
-  feeLimitBn,
-  condition = null
+  instructionTypeBn: BN,
+  senderVaultIdBn: BN,
+  receiverVaultIdBn: BN,
+  amountBn: BN,
+  nonceBn: BN,
+  expirationTimestampBn: BN,
+  transferToken: string,
+  receiverPublicKey: string,
+  feeToken: string,
+  feeVaultIdBn: BN,
+  feeLimitBn: BN,
+  condition: string | null = null
 ) {
   let packedMessage1 = senderVaultIdBn;
   packedMessage1 = packedMessage1.ushln(64).add(receiverVaultIdBn);
@@ -186,18 +189,18 @@ function hashTransferMsgWithFee(
 }
 
 function hashLimitOrderMsgWithFee(
-  instructionTypeBn,
-  vaultSellBn,
-  vaultBuyBn,
-  amountSellBn,
-  amountBuyBn,
-  nonceBn,
-  expirationTimestampBn,
-  tokenSell,
-  tokenBuy,
-  feeToken,
-  feeVaultIdBn,
-  feeLimitBn
+  instructionTypeBn: BN,
+  vaultSellBn: BN,
+  vaultBuyBn: BN,
+  amountSellBn: BN,
+  amountBuyBn: BN,
+  nonceBn: BN,
+  expirationTimestampBn: BN,
+  tokenSell: string,
+  tokenBuy: string,
+  feeToken: string,
+  feeVaultIdBn: BN,
+  feeLimitBn: BN
 ) {
   let packedMessage1 = amountSellBn;
   packedMessage1 = packedMessage1.ushln(64).add(amountBuyBn);
@@ -223,7 +226,7 @@ function hashLimitOrderMsgWithFee(
   return msgHash;
 }
 
-/*
+/**
  Serializes the order message in the canonical format expected by the verifier.
  party_a sells amountSell coins of tokenSell from vaultSell.
  party_a buys amountBuy coins of tokenBuy into vaultBuy.
@@ -237,14 +240,14 @@ function hashLimitOrderMsgWithFee(
  expirationTimestamp - uint22 (as int).
 */
 function getLimitOrderMsgHash(
-  vaultSell,
-  vaultBuy,
-  amountSell,
-  amountBuy,
-  tokenSell,
-  tokenBuy,
-  nonce,
-  expirationTimestamp
+  vaultSell: number,
+  vaultBuy: number,
+  amountSell: number,
+  amountBuy: number,
+  tokenSell: string,
+  tokenBuy: string,
+  nonce: number,
+  expirationTimestamp: number
 ) {
   assert(
     hasHexPrefix(tokenSell) && hasHexPrefix(tokenBuy),
@@ -282,7 +285,7 @@ function getLimitOrderMsgHash(
   );
 }
 
-/*
+/**
  Same as getLimitOrderMsgHash, but also requires the fee info.
 
  Expected types of fee info params:
@@ -292,17 +295,17 @@ function getLimitOrderMsgHash(
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
 */
 function getLimitOrderMsgHashWithFee(
-  vaultSell,
-  vaultBuy,
-  amountSell,
-  amountBuy,
-  tokenSell,
-  tokenBuy,
-  nonce,
-  expirationTimestamp,
-  feeToken,
-  feeVaultId,
-  feeLimit
+  vaultSell: number,
+  vaultBuy: number,
+  amountSell: number,
+  amountBuy: number,
+  tokenSell: string,
+  tokenBuy: string,
+  nonce: number,
+  expirationTimestamp: number,
+  feeToken: string,
+  feeVaultId: number,
+  feeLimit: number
 ) {
   assert(
     hasHexPrefix(tokenSell) && hasHexPrefix(tokenBuy),
@@ -349,7 +352,7 @@ function getLimitOrderMsgHashWithFee(
   );
 }
 
-/*
+/**
  Serializes the transfer message in the canonical format expected by the verifier.
  The sender transfer 'amount' coins of 'token' from vault with id senderVaultId to vault with id
  receiverVaultId. The receiver's public key is receiverPublicKey.
@@ -367,14 +370,14 @@ function getLimitOrderMsgHashWithFee(
  condition - uint256 field element strictly less than the prime (as hex string with 0x)
 */
 function getTransferMsgHash(
-  amount,
-  nonce,
-  senderVaultId,
-  token,
-  receiverVaultId,
-  receiverPublicKey,
-  expirationTimestamp,
-  condition = null
+  amount: number,
+  nonce: number,
+  senderVaultId: number,
+  token: string,
+  receiverVaultId: number,
+  receiverPublicKey: string,
+  expirationTimestamp: number,
+  condition: string | null = null
 ) {
   assert(
     hasHexPrefix(token) &&
@@ -417,7 +420,7 @@ function getTransferMsgHash(
   );
 }
 
-/*
+/**
  Same as getTransferMsgHash, but also requires the fee info.
 
  Expected types of fee info params:
@@ -427,17 +430,17 @@ function getTransferMsgHash(
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
 */
 function getTransferMsgHashWithFee(
-  amount,
-  nonce,
-  senderVaultId,
-  token,
-  receiverVaultId,
-  receiverStarkKey,
-  expirationTimestamp,
-  feeToken,
-  feeVaultId,
-  feeLimit,
-  condition = null
+  amount: number,
+  nonce: number,
+  senderVaultId: number,
+  token: string,
+  receiverVaultId: number,
+  receiverStarkKey: string,
+  expirationTimestamp: number,
+  feeToken: string,
+  feeVaultId: number,
+  feeLimit: number,
+  condition: string | null = null
 ) {
   assert(
     hasHexPrefix(feeToken) &&
@@ -490,14 +493,14 @@ function getTransferMsgHashWithFee(
   );
 }
 
-/*
+/**
  The function _truncateToN in lib/elliptic/ec/index.js does a shift-right of delta bits,
  if delta is positive, where
    delta = msgHash.byteLength() * 8 - starkEx.n.bitLength().
  This function does the opposite operation so that
    _truncateToN(fixMsgHashLen(msgHash)) == msgHash.
 */
-function fixMsgHashLen(msgHash) {
+function fixMsgHashLen(msgHash: string) {
   // Convert to BN to remove leading zeros.
   msgHash = new BN(msgHash, 16).toString(16);
 
@@ -511,12 +514,12 @@ function fixMsgHashLen(msgHash) {
   return msgHash + '0';
 }
 
-/*
+/**
  Signs a message using the provided key.
  privateKey should be an elliptic.keyPair with a valid private key.
  Returns an elliptic.Signature.
 */
-function sign(privateKey, msgHash) {
+function sign(privateKey: elliptic.keyPair, msgHash: string) {
   const msgHashBN = new BN(msgHash, 16);
   // Verify message hash has valid length.
   assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
@@ -530,13 +533,13 @@ function sign(privateKey, msgHash) {
   return msgSignature;
 }
 
-/*
+/**
  Verifies a message using the provided key.
  publicKey should be an elliptic.keyPair with a valid public key.
  msgSignature should be an elliptic.Signature.
  Returns a boolean true if the verification succeeds.
 */
-function verify(publicKey, msgHash, msgSignature) {
+function verify(publicKey: elliptic.keyPair, msgHash: string, msgSignature: any) {
   const msgHashBN = new BN(msgHash, 16);
   // Verify message hash has valid length.
   assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
@@ -549,7 +552,7 @@ function verify(publicKey, msgHash, msgSignature) {
   return publicKey.verify(fixMsgHashLen(msgHash), msgSignature);
 }
 
-module.exports = {
+export = {
   prime,
   ec: starkEc,
   constantPoints,

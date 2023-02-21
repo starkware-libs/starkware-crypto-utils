@@ -14,10 +14,10 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-const BN = require('bn.js');
-const encUtils = require('enc-utils');
-const sha3 = require('js-sha3');
-const assert = require('assert');
+import BN from "bn.js";
+import encUtils from "enc-utils";
+import sha3 from "js-sha3";
+import assert from "assert";
 
 // Generate BN of 1.
 const oneBn = new BN('1', 16);
@@ -39,7 +39,7 @@ const maskMintabilityBit = new BN(
   16
 );
 
-function getAssetType(assetDict) {
+function getAssetType(assetDict: any) {
   const assetSelector = getAssetSelector(assetDict.type);
 
   // Expected length is maintained to fix the length of the resulting asset info string in case of
@@ -67,16 +67,16 @@ function getAssetType(assetDict) {
   assetInfo = assetInfo.ushln(256).add(quantum);
   expectedLen += 64;
 
-  let assetType = sha3.keccak_256(
+  let assetEncoded = sha3.keccak_256(
     encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
   );
-  assetType = new BN(assetType, 16);
+  let assetType = new BN(assetEncoded, 16);
   assetType = assetType.and(mask);
 
   return '0x' + assetType.toJSON();
 }
 
-/*
+/**
  Computes the hash representing the encoded asset ID for a given asset.
  asset is a dictionary containing the type and data of the asset to parse. the asset type is
  represented by a string describing the associated asset while the data is a dictionary
@@ -95,7 +95,7 @@ function getAssetType(assetDict) {
 
     '0x352386d5b7c781d47ecd404765307d74edc4d43b0490b8e03c71ac7a7429653'.
 */
-function getAssetId(assetDict) {
+function getAssetId(assetDict: any) {
   const assetType = new BN(
     encUtils.removeHexPrefix(getAssetType(assetDict)),
     16
@@ -116,10 +116,10 @@ function getAssetId(assetDict) {
     assetInfo = assetInfo
       .ushln(256)
       .add(new BN(parseInt(assetDict.data.tokenId), 16));
-    assetId = sha3.keccak_256(
+    let assetEncoded = sha3.keccak_256(
       encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
     );
-    assetId = new BN(assetId, 16);
+    assetId = new BN(assetEncoded, 16);
     assetId = assetId.and(mask);
   } else if (
     assetDict.type === 'MINTABLE_ERC721' ||
@@ -138,10 +138,10 @@ function getAssetId(assetDict) {
     assetInfo = assetInfo
       .ushln(256)
       .add(new BN(encUtils.removeHexPrefix(blobHash), 16));
-    assetId = sha3.keccak_256(
+    let assetEncoded = sha3.keccak_256(
       encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
     );
-    assetId = new BN(assetId, 16);
+    assetId = new BN(assetEncoded, 16);
     assetId = assetId.and(mask240);
     assetId = assetId.or(maskMintabilityBit);
   }
@@ -149,10 +149,10 @@ function getAssetId(assetDict) {
   return '0x' + assetId.toJSON();
 }
 
-/*
+/**
  Computes the given asset's unique selector based on its type.
 */
-function getAssetSelector(assetDictType) {
+function getAssetSelector(assetDictType: string) {
   let seed = '';
   switch (assetDictType.toUpperCase()) {
     case 'ETH':
@@ -176,10 +176,10 @@ function getAssetSelector(assetDictType) {
   return encUtils.sanitizeHex(sha3.keccak_256(seed).slice(0, 8));
 }
 
-/*
+/**
  Adds leading zeroes to the input hex-string to complement the expected length.
 */
-function addLeadingZeroes(hexStr, expectedLen) {
+function addLeadingZeroes(hexStr: string, expectedLen: number) {
   let res = hexStr;
   assert(res.length <= expectedLen);
   while (res.length < expectedLen) {
@@ -188,11 +188,11 @@ function addLeadingZeroes(hexStr, expectedLen) {
   return res;
 }
 
-function blobToBlobHash(blob) {
+function blobToBlobHash(blob: string) {
   return '0x' + sha3.keccak_256(blob);
 }
 
-module.exports = {
+export = {
   getAssetType,
   getAssetId // Function.
 };
