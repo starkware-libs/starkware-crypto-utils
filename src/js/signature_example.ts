@@ -14,7 +14,7 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-const starkwareCrypto = require('./signature.js');
+const starkwareCrypto = require('./signature');
 const assert = require('assert');
 const testData = require('../../test/config/signature_test_data.json');
 

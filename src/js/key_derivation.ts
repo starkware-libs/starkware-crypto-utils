@@ -14,13 +14,13 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-import { hdkey } from "ethereumjs-wallet";
-import bip39 from "bip39";
-import encUtils from "enc-utils";
-import BN from "bn.js";
-import hash from "hash.js";
-import { ec } from "./signature.js";
-import assert from "assert";
+import assert from 'assert';
+import bip39 from 'bip39';
+import BN from 'bn.js';
+import encUtils from 'enc-utils';
+import {hdkey} from 'ethereumjs-wallet';
+import hash from 'hash.js';
+import {ec} from './signature';
 
 const ETH_SIGNATURE_LENGTH: number = 130;
 const STARK_PRIVATE_KEY_LENGTH: number = 63;
@@ -31,7 +31,11 @@ const STARK_PRIVATE_KEY_LENGTH: number = 63;
  start represents the index of the first bit to cut from the hex string (binary) in LSB order.
  end represents the index of the last bit to cut from the hex string.
 */
-function getIntFromBits(hex: string, start: number, end: number | undefined = undefined) {
+function getIntFromBits(
+  hex: string,
+  start: number,
+  end: number | undefined = undefined
+) {
   const bin = encUtils.hexToBinary(hex);
   const bits = bin.slice(start, end);
   const int = encUtils.binaryToNumber(bits);
@@ -42,7 +46,7 @@ function getIntFromBits(hex: string, start: number, end: number | undefined = un
  Returns true if the given string is a hex string of length hexLength, and false otherwise.
  */
 function isHexOfLength(hex: string, hexLength: number): boolean {
-  const regex = new RegExp("^[0-9a-fA-F]{" + hexLength + "}$");
+  const regex = new RegExp('^[0-9a-fA-F]{' + hexLength + '}$');
   return regex.test(hex);
 }
 
@@ -52,10 +56,10 @@ function isHexOfLength(hex: string, hexLength: number): boolean {
  predetermined message in order to guarantee getting the same private key each time it is invoked.
 */
 function getPrivateKeyFromEthSignature(ethSignature: string) {
-  const ethSignatureFixed = ethSignature.replace(/^0x/, "");
+  const ethSignatureFixed = ethSignature.replace(/^0x/, '');
   assert(isHexOfLength(ethSignatureFixed, ETH_SIGNATURE_LENGTH));
   const r = ethSignatureFixed.substring(0, 64);
-  return grindKey(r, ec.n);
+  return grindKey(r, ec.n as BN);
 }
 
 /**
@@ -63,10 +67,10 @@ function getPrivateKeyFromEthSignature(ethSignature: string) {
  The private key should be a random hex string of length up to 63 characters.
 */
 function privateToStarkKey(privateKey: string) {
-  const privateKeyFixed = privateKey.replace(/^0x/, "");
+  const privateKeyFixed = privateKey.replace(/^0x/, '');
   assert(privateKeyFixed.length <= STARK_PRIVATE_KEY_LENGTH);
   assert(isHexOfLength(privateKeyFixed, privateKeyFixed.length));
-  const keyPair = ec.keyFromPrivate(privateKeyFixed, "hex");
+  const keyPair = ec.keyFromPrivate(privateKeyFixed, 'hex');
   return keyPair.getPublic().getX().toJSON();
 }
 
@@ -79,12 +83,12 @@ function privateToStarkKey(privateKey: string) {
 function getKeyPairFromPath(mnemonic: string, path: string) {
   const seed = bip39.mnemonicToSeedSync(mnemonic);
   const keySeed = hdkey
-    .fromMasterSeed(seed, "hex")
+    .fromMasterSeed(seed)
     .derivePath(path)
     .getWallet()
     .getPrivateKeyString();
   const starkEcOrder = ec.n;
-  return ec.keyFromPrivate(grindKey(keySeed, starkEcOrder), "hex");
+  return ec.keyFromPrivate(grindKey(keySeed, starkEcOrder as BN), 'hex');
 }
 
 /**
@@ -97,9 +101,13 @@ function getKeyPairFromPath(mnemonic: string, path: string) {
  index represents an index of the possible associated wallets derived from the seed.
 */
 function getAccountPath(
-  layer: string, application: string, ethereumAddress: string, index: number) {
-  const layerHash = hash.sha256().update(layer).digest("hex");
-  const applicationHash = hash.sha256().update(application).digest("hex");
+  layer: string,
+  application: string,
+  ethereumAddress: string,
+  index: number
+) {
+  const layerHash = hash.sha256().update(layer).digest('hex');
+  const applicationHash = hash.sha256().update(application).digest('hex');
   const layerInt = getIntFromBits(layerHash, -31);
   const applicationInt = getIntFromBits(applicationHash, -31);
   // Draws the 31 LSBs of the eth address.
@@ -119,7 +127,7 @@ function getAccountPath(
 */
 function grindKey(keySeed: string, keyValLimit: BN) {
   const sha256EcMaxDigest = new BN(
-    "1 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000",
+    '1 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000',
     16
   );
   const maxAllowedVal = sha256EcMaxDigest.sub(
@@ -134,7 +142,7 @@ function grindKey(keySeed: string, keyValLimit: BN) {
     key = hashKeyWithIndex(keySeed, i);
     i++;
   }
-  return key.umod(keyValLimit).toString("hex");
+  return key.umod(keyValLimit).toString('hex');
 }
 
 function hashKeyWithIndex(key: string, index: number) {
@@ -144,10 +152,10 @@ function hashKeyWithIndex(key: string, index: number) {
       .update(
         encUtils.hexToBuffer(
           encUtils.removeHexPrefix(key) +
-          encUtils.sanitizeBytes(encUtils.numberToHex(index), 2)
+            encUtils.sanitizeBytes(encUtils.numberToHex(index), 2)
         )
       )
-      .digest("hex"),
+      .digest('hex'),
     16
   );
 }
@@ -155,7 +163,7 @@ function hashKeyWithIndex(key: string, index: number) {
 const StarkExEc = ec.n;
 
 export {
-  StarkExEc, // Data.
+  StarkExEc,
   getPrivateKeyFromEthSignature,
   privateToStarkKey,
   getKeyPairFromPath,

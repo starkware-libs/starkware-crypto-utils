@@ -14,19 +14,15 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-import BN from "bn.js";
-import hash from "hash.js";
-import * as elliptic from "elliptic";
-import assert from "assert";
-import {
-  assertInRange,
-  assertInMultiRange,
-  Range
-} from "./message_utils.js";
-import * as constantPointsHex from "../config/constant_points.json";
+import assert from 'assert';
+import BN from 'bn.js';
+import * as elliptic from 'elliptic';
+import hash from 'hash.js';
+import * as constantPointsHex from '../config/constant_points.json';
+import {Range, assertInMultiRange, assertInRange} from './message_utils.js';
 
 const eCurves = elliptic.curves;
-const EllipticCurve = elliptic.ec
+const EllipticCurve = elliptic.ec;
 
 // Equals 2**251 + 17 * 2**192 + 1.
 const prime = new BN(
@@ -59,7 +55,7 @@ const starkEc = new EllipticCurve(
   new eCurves.PresetCurve({
     type: 'short',
     prime: null,
-    p: prime,
+    p: prime.toString(),
     a: '00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001',
     b: '06f21413 efbe40de 150e596d 72f7a8c5 609ad26c 15c915c1 f4cdfcb9 9cee9e89',
     n: '08000000 00000010 ffffffff ffffffff b781126d cae7b232 1e66a241 adc64d2f',
@@ -516,19 +512,19 @@ function fixMsgHashLen(msgHash: string) {
 
 /**
  Signs a message using the provided key.
- privateKey should be an elliptic.keyPair with a valid private key.
+ privateKey should be an elliptic.KeyPair with a valid private key.
  Returns an elliptic.Signature.
 */
-function sign(privateKey: elliptic.keyPair, msgHash: string) {
+function sign(privateKey: elliptic.ec.KeyPair, msgHash: string) {
   const msgHashBN = new BN(msgHash, 16);
   // Verify message hash has valid length.
   assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
   const msgSignature = privateKey.sign(fixMsgHashLen(msgHash));
   const {r, s} = msgSignature;
-  const w = s.invm(starkEc.n);
+  const w = s.invm(starkEc.n as BN);
   // Verify signature has valid length.
   assertInRange(r, oneBn, maxEcdsaVal, 'r');
-  assertInRange(s, oneBn, starkEc.n, 's');
+  assertInRange(s, oneBn, starkEc.n as BN, 's');
   assertInRange(w, oneBn, maxEcdsaVal, 'w');
   return msgSignature;
 }
@@ -539,26 +535,30 @@ function sign(privateKey: elliptic.keyPair, msgHash: string) {
  msgSignature should be an elliptic.Signature.
  Returns a boolean true if the verification succeeds.
 */
-function verify(publicKey: elliptic.keyPair, msgHash: string, msgSignature: any) {
+function verify(
+  publicKey: elliptic.ec.KeyPair,
+  msgHash: string,
+  msgSignature: elliptic.ec.Signature
+) {
   const msgHashBN = new BN(msgHash, 16);
   // Verify message hash has valid length.
   assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
   const {r, s} = msgSignature;
-  const w = s.invm(starkEc.n);
+  const w = s.invm(starkEc.n as BN);
   // Verify signature has valid length.
   assertInRange(r, oneBn, maxEcdsaVal, 'r');
-  assertInRange(s, oneBn, starkEc.n, 's');
+  assertInRange(s, oneBn, starkEc.n as BN, 's');
   assertInRange(w, oneBn, maxEcdsaVal, 'w');
   return publicKey.verify(fixMsgHashLen(msgHash), msgSignature);
 }
 
-export = {
+export {
   prime,
-  ec: starkEc,
+  starkEc as ec,
   constantPoints,
   shiftPoint,
-  maxEcdsaVal, // Data.
-  Range, // Class.
+  maxEcdsaVal,
+  Range,
   pedersen,
   getLimitOrderMsgHash,
   getTransferMsgHash,

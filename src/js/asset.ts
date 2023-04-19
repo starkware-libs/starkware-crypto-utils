@@ -14,10 +14,11 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-import BN from "bn.js";
-import encUtils from "enc-utils";
-import sha3 from "js-sha3";
-import assert from "assert";
+import assert from 'assert';
+import BN from 'bn.js';
+import encUtils from 'enc-utils';
+import sha3 from 'js-sha3';
+import {AssetDict} from './types';
 
 // Generate BN of 1.
 const oneBn = new BN('1', 16);
@@ -39,7 +40,7 @@ const maskMintabilityBit = new BN(
   16
 );
 
-function getAssetType(assetDict: any) {
+function getAssetType(assetDict: AssetDict) {
   const assetSelector = getAssetSelector(assetDict.type);
 
   // Expected length is maintained to fix the length of the resulting asset info string in case of
@@ -95,7 +96,7 @@ function getAssetType(assetDict: any) {
 
     '0x352386d5b7c781d47ecd404765307d74edc4d43b0490b8e03c71ac7a7429653'.
 */
-function getAssetId(assetDict: any) {
+function getAssetId(assetDict: AssetDict) {
   const assetType = new BN(
     encUtils.removeHexPrefix(getAssetType(assetDict)),
     16
@@ -115,7 +116,7 @@ function getAssetId(assetDict: any) {
     assetInfo = assetInfo.ushln(256).add(assetType);
     assetInfo = assetInfo
       .ushln(256)
-      .add(new BN(parseInt(assetDict.data.tokenId), 16));
+      .add(new BN(parseInt(assetDict.data.tokenId as string), 16));
     let assetEncoded = sha3.keccak_256(
       encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
     );
@@ -134,7 +135,7 @@ function getAssetId(assetDict: any) {
     // calculation discarded them in the process.
     const expectedLen = 18 + 64 + 64;
     assetInfo = assetInfo.ushln(256).add(assetType);
-    const blobHash = blobToBlobHash(assetDict.data.blob);
+    const blobHash = blobToBlobHash(assetDict.data.blob as string);
     assetInfo = assetInfo
       .ushln(256)
       .add(new BN(encUtils.removeHexPrefix(blobHash), 16));
@@ -192,7 +193,7 @@ function blobToBlobHash(blob: string) {
   return '0x' + sha3.keccak_256(blob);
 }
 
-export = {
+export {
   getAssetType,
   getAssetId // Function.
 };

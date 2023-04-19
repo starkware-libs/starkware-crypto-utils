@@ -1,13 +1,7 @@
 {
   "compilerOptions": {
-    "composite": true,
     "target": "es5",
-    "lib": [
-      "es2017",
-      "es7",
-      "es6",
-      "dom"
-    ],
+    "lib": ["es2017", "es7", "es6", "dom"],
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,
@@ -17,7 +11,9 @@
     "strict": true,
     "skipLibCheck": true,
     "removeComments": true,
-    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "outDir": "./dist"
   },
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules"]
 }
