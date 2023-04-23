@@ -15,22 +15,22 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 import assert from 'assert';
-import bip39 from 'bip39';
+import * as bip39 from 'bip39';
 import BN from 'bn.js';
-import encUtils from 'enc-utils';
+import * as encUtils from 'enc-utils';
 import {hdkey} from 'ethereumjs-wallet';
 import hash from 'hash.js';
 import {ec} from './signature';
 
-const ETH_SIGNATURE_LENGTH: number = 130;
-const STARK_PRIVATE_KEY_LENGTH: number = 63;
+const ETH_SIGNATURE_LENGTH = 130;
+const STARK_PRIVATE_KEY_LENGTH = 63;
 
 /**
  Returns an integer from a given section of bits out of a hex string.
  hex is the target hex string to slice.
  start represents the index of the first bit to cut from the hex string (binary) in LSB order.
  end represents the index of the last bit to cut from the hex string.
-*/
+ */
 function getIntFromBits(
   hex: string,
   start: number,
@@ -54,7 +54,7 @@ function isHexOfLength(hex: string, hexLength: number): boolean {
  Returns a private stark key based on a given Eth signature.
  The given signature should be a 130 character hex string produced by the user signing a
  predetermined message in order to guarantee getting the same private key each time it is invoked.
-*/
+ */
 function getPrivateKeyFromEthSignature(ethSignature: string) {
   const ethSignatureFixed = ethSignature.replace(/^0x/, '');
   assert(isHexOfLength(ethSignatureFixed, ETH_SIGNATURE_LENGTH));
@@ -65,7 +65,7 @@ function getPrivateKeyFromEthSignature(ethSignature: string) {
 /**
  Returns a public stark key given the private key.
  The private key should be a random hex string of length up to 63 characters.
-*/
+ */
 function privateToStarkKey(privateKey: string) {
   const privateKeyFixed = privateKey.replace(/^0x/, '');
   assert(privateKeyFixed.length <= STARK_PRIVATE_KEY_LENGTH);
@@ -79,7 +79,7 @@ function privateToStarkKey(privateKey: string) {
  mnemonic should be a sentence comprised of 12 words with single spaces between them.
  path is a formatted string describing the stark key path based on the layer, application and eth
  address.
-*/
+ */
 function getKeyPairFromPath(mnemonic: string, path: string) {
   const seed = bip39.mnemonicToSeedSync(mnemonic);
   const keySeed = hdkey
@@ -99,7 +99,7 @@ function getKeyPairFromPath(mnemonic: string, path: string) {
  ethereumAddress is a string representing the ethereum public key from which we derive the stark
  key.
  index represents an index of the possible associated wallets derived from the seed.
-*/
+ */
 function getAccountPath(
   layer: string,
   application: string,
@@ -124,7 +124,7 @@ function getAccountPath(
  random 256bit digest value, the result would be a biased key. In order to prevent this bias, we
  deterministically search (by applying more hashes, AKA grinding) for a value lower than the largest
  256bit multiple of StarkEx EC order.
-*/
+ */
 function grindKey(keySeed: string, keyValLimit: BN) {
   const sha256EcMaxDigest = new BN(
     '1 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000',

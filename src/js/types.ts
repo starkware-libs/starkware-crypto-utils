@@ -1,5 +1,5 @@
 type AssetDictData = {
-  quantum: string;
+  quantum?: string;
   tokenAddress?: string;
   tokenId?: string;
   blob?: string;

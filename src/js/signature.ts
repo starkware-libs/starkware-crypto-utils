@@ -16,13 +16,10 @@
 
 import assert from 'assert';
 import BN from 'bn.js';
-import * as elliptic from 'elliptic';
+import {curves as eCurves, ec as EllipticCurve} from 'elliptic';
 import hash from 'hash.js';
-import * as constantPointsHex from '../config/constant_points.json';
-import {Range, assertInMultiRange, assertInRange} from './message_utils.js';
-
-const eCurves = elliptic.curves;
-const EllipticCurve = elliptic.ec;
+import constantPointsHex from '../config/constant_points.json';
+import {Range, assertInMultiRange, assertInRange} from './message_utils';
 
 // Equals 2**251 + 17 * 2**192 + 1.
 const prime = new BN(
@@ -55,7 +52,8 @@ const starkEc = new EllipticCurve(
   new eCurves.PresetCurve({
     type: 'short',
     prime: null,
-    p: prime.toString(),
+    // @ts-ignore
+    p: prime,
     a: '00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001',
     b: '06f21413 efbe40de 150e596d 72f7a8c5 609ad26c 15c915c1 f4cdfcb9 9cee9e89',
     n: '08000000 00000010 ffffffff ffffffff b781126d cae7b232 1e66a241 adc64d2f',
@@ -71,19 +69,19 @@ const constantPoints = constantPointsHex.map(coords =>
 const shiftPoint = constantPoints[0];
 
 /**
-  Checks that the string str start with '0x'.
-*/
+ Checks that the string str start with '0x'.
+ */
 function hasHexPrefix(str: string) {
   return str.substring(0, 2) === '0x';
 }
 
 /**
  Full specification of the hash function can be found here:
-   https://starkware.co/starkex/docs/signatures.html#pedersen-hash-function
+ https://starkware.co/starkex/docs/signatures.html#pedersen-hash-function
  shiftPoint was added for technical reasons to make sure the zero point on the elliptic curve does
  not appear during the computation. constantPoints are multiples by powers of 2 of the constant
  points defined in the documentation.
-*/
+ */
 function pedersen(input: Array<string>) {
   let point = shiftPoint;
   for (let i = 0; i < input.length; i++) {
@@ -234,7 +232,7 @@ function hashLimitOrderMsgWithFee(
  tokenSell, tokenBuy - uint256 field element strictly less than the prime (as hex string with 0x)
  nonce - uint31 (as int)
  expirationTimestamp - uint22 (as int).
-*/
+ */
 function getLimitOrderMsgHash(
   vaultSell: number,
   vaultBuy: number,
@@ -289,7 +287,7 @@ function getLimitOrderMsgHash(
  feeVaultId - uint64 (as int)
  feeLimit - uint63 (as decimal string)
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
-*/
+ */
 function getLimitOrderMsgHashWithFee(
   vaultSell: number,
   vaultBuy: number,
@@ -364,7 +362,7 @@ function getLimitOrderMsgHashWithFee(
  receiverPublicKey - uint256 field element strictly less than the prime (as hex string with 0x)
  expirationTimestamp - uint22 (as int).
  condition - uint256 field element strictly less than the prime (as hex string with 0x)
-*/
+ */
 function getTransferMsgHash(
   amount: number,
   nonce: number,
@@ -424,7 +422,7 @@ function getTransferMsgHash(
  feeVaultId - uint64 (as int)
  feeLimit - uint63 (as decimal string)
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
-*/
+ */
 function getTransferMsgHashWithFee(
   amount: number,
   nonce: number,
@@ -492,10 +490,10 @@ function getTransferMsgHashWithFee(
 /**
  The function _truncateToN in lib/elliptic/ec/index.js does a shift-right of delta bits,
  if delta is positive, where
-   delta = msgHash.byteLength() * 8 - starkEx.n.bitLength().
+ delta = msgHash.byteLength() * 8 - starkEx.n.bitLength().
  This function does the opposite operation so that
-   _truncateToN(fixMsgHashLen(msgHash)) == msgHash.
-*/
+ _truncateToN(fixMsgHashLen(msgHash)) == msgHash.
+ */
 function fixMsgHashLen(msgHash: string) {
   // Convert to BN to remove leading zeros.
   msgHash = new BN(msgHash, 16).toString(16);
@@ -514,8 +512,8 @@ function fixMsgHashLen(msgHash: string) {
  Signs a message using the provided key.
  privateKey should be an elliptic.KeyPair with a valid private key.
  Returns an elliptic.Signature.
-*/
-function sign(privateKey: elliptic.ec.KeyPair, msgHash: string) {
+ */
+function sign(privateKey: EllipticCurve.KeyPair, msgHash: string) {
   const msgHashBN = new BN(msgHash, 16);
   // Verify message hash has valid length.
   assertInRange(msgHashBN, zeroBn, maxEcdsaVal, 'msgHash');
@@ -534,11 +532,11 @@ function sign(privateKey: elliptic.ec.KeyPair, msgHash: string) {
  publicKey should be an elliptic.keyPair with a valid public key.
  msgSignature should be an elliptic.Signature.
  Returns a boolean true if the verification succeeds.
-*/
+ */
 function verify(
-  publicKey: elliptic.ec.KeyPair,
+  publicKey: EllipticCurve.KeyPair,
   msgHash: string,
-  msgSignature: elliptic.ec.Signature
+  msgSignature: EllipticCurve.Signature
 ) {
   const msgHashBN = new BN(msgHash, 16);
   // Verify message hash has valid length.

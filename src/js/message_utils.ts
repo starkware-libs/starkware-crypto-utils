@@ -14,8 +14,8 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-import assert from "assert";
-import BN from "bn.js";
+import assert from 'assert';
+import BN from 'bn.js';
 
 /**
  Asserts input is equal to or greater than lowerBound and lower than upperBound.
@@ -23,9 +23,14 @@ import BN from "bn.js";
  input, lowerBound, and upperBound should be of type BN.
  inputName should be a string.
 */
-function assertInRange(input: BN, lowerBound: BN, upperBound: BN, inputName: string = "") {
+function assertInRange(
+  input: BN,
+  lowerBound: BN,
+  upperBound: BN,
+  inputName = ''
+) {
   const messageSuffix =
-    inputName === "" ? "invalid length" : `invalid ${inputName} length`;
+    inputName === '' ? 'invalid length' : `invalid ${inputName} length`;
   assert(
     input.gte(lowerBound) && input.lt(upperBound),
     `Message not signable, ${messageSuffix}.`
@@ -33,8 +38,7 @@ function assertInRange(input: BN, lowerBound: BN, upperBound: BN, inputName: str
 }
 
 class Range {
-  constructor(public lowerBound: BN, public upperBound: BN) {
-  }
+  constructor(public lowerBound: BN, public upperBound: BN) {}
 }
 
 /**
@@ -44,9 +48,9 @@ class Range {
  ranges should be a vector of Range objects.
  inputName should be a string.
 */
-function assertInMultiRange(input: BN, ranges: Range[], inputName: string = "") {
+function assertInMultiRange(input: BN, ranges: Range[], inputName = '') {
   const messageSuffix =
-    inputName === "" ? "invalid length" : `invalid ${inputName} length`;
+    inputName === '' ? 'invalid length' : `invalid ${inputName} length`;
   for (let i = 0; i < ranges.length; i++) {
     if (input.gte(ranges[i].lowerBound) && input.lt(ranges[i].upperBound)) {
       return;

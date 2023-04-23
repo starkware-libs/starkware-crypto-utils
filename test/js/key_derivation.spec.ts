@@ -1,13 +1,14 @@
-/* eslint-disable no-unused-expressions */
-const {
+import {expect} from 'chai';
+import {
   StarkExEc,
   getKeyPairFromPath,
   getAccountPath,
   privateToStarkKey,
   getPrivateKeyFromEthSignature,
   grindKey
-} = require(`${SRC_DIR_PATH}/key_derivation`);
-const precomputedKeys = require(`${CONFIG_DIR_PATH}/keys_precomputed.json`);
+} from '../../src/js/key_derivation';
+import precomputedKeys from '../../src/config/keys_precomputed.json';
+import BN from 'bn.js';
 
 const layer = 'starkex';
 const application = 'starkdeployement';
@@ -46,7 +47,7 @@ describe('Key grinding', () => {
   it('should produce the correct ground key', () => {
     const privateKey =
       '86F3E7293141F20A8BAFF320E8EE4ACCB9D4A4BF2B4D295E8CEE784DB46E0519';
-    expect(grindKey(privateKey, StarkExEc)).to.equal(
+    expect(grindKey(privateKey, StarkExEc as BN)).to.equal(
       '5c8c8683596c732541a59e03007b2d30dbbbb873556fe65b5fb63c16688f941'
     );
   });

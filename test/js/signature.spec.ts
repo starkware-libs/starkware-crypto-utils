@@ -1,20 +1,21 @@
-/* eslint-disable no-unused-expressions */
-const starkwareCrypto = require(`${SRC_DIR_PATH}/signature.js`);
-const rfc6979TestData = require('../config/rfc6979_signature_test_vector.json');
-const testData = require('../config/signature_test_data.json');
-const BN = require('bn.js');
+// @ts-nocheck
+import {ec, sign, verify, pedersen, maxEcdsaVal} from '../../src/js/signature';
+import rfc6979TestData from '../config/rfc6979_signature_test_vector.json';
+import testData from '../config/signature_test_data.json';
+import BN from 'bn.js';
+import {expect} from 'chai';
 
 // Tools for testing.
 function generateRandomStarkPrivateKey() {
   return randomHexString(63);
 }
 
-function randomHexString(length, leading0x = false) {
+function randomHexString(length: number, leading0x = false) {
   const result = randomString('0123456789ABCDEF', length);
   return leading0x ? '0x' + result : result;
 }
 
-function randomString(characters, length) {
+function randomString(characters: string, length: number) {
   let result = '';
   for (let i = 0; i < length; ++i) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -28,24 +29,17 @@ describe('Verify', () => {
 
   it('should verify valid signatures', () => {
     const privKey = generateRandomStarkPrivateKey();
-    const keyPair = starkwareCrypto.ec.keyFromPrivate(privKey, 'hex');
-    const keyPairPub = starkwareCrypto.ec.keyFromPublic(
-      keyPair.getPublic(),
-      'BN'
-    );
+    const keyPair = ec.keyFromPrivate(privKey, 'hex');
+    const keyPairPub = ec.keyFromPublic(keyPair.getPublic(), 'BN');
     const msgHash = new BN(randomHexString(61));
-    const msgSignature = starkwareCrypto.sign(keyPair, msgHash);
+    const msgSignature = sign(keyPair, msgHash);
 
-    expect(starkwareCrypto.verify(keyPair, msgHash.toString(16), msgSignature))
-      .to.be.true;
-    expect(
-      starkwareCrypto.verify(keyPairPub, msgHash.toString(16), msgSignature)
-    ).to.be.true;
+    expect(verify(keyPair, msgHash.toString(16), msgSignature)).to.be.true;
+    expect(verify(keyPairPub, msgHash.toString(16), msgSignature)).to.be.true;
   });
 
   it('should not verify invalid signature inputs lengths', () => {
-    const ecOrder = starkwareCrypto.ec.n;
-    const {maxEcdsaVal} = starkwareCrypto;
+    const ecOrder = ec.n as BN;
     const maxMsgHash = maxEcdsaVal.sub(oneBn);
     const maxR = maxEcdsaVal.sub(oneBn);
     const maxS = ecOrder.sub(oneBn).sub(oneBn);
@@ -53,28 +47,28 @@ describe('Verify', () => {
 
     // Test invalid message length.
     expect(() =>
-      starkwareCrypto.verify(maxStarkKey, maxMsgHash.add(oneBn).toString(16), {
+      verify(maxStarkKey, maxMsgHash.add(oneBn).toString(16), {
         r: maxR,
         s: maxS
       })
     ).to.throw('Message not signable, invalid msgHash length.');
     // Test invalid r length.
     expect(() =>
-      starkwareCrypto.verify(maxStarkKey, maxMsgHash.toString(16), {
+      verify(maxStarkKey, maxMsgHash.toString(16), {
         r: maxR.add(oneBn),
         s: maxS
       })
     ).to.throw('Message not signable, invalid r length.');
     // Test invalid w length.
     expect(() =>
-      starkwareCrypto.verify(maxStarkKey, maxMsgHash.toString(16), {
+      verify(maxStarkKey, maxMsgHash.toString(16), {
         r: maxR,
         s: maxS.add(oneBn)
       })
     ).to.throw('Message not signable, invalid w length.');
     // Test invalid s length.
     expect(() =>
-      starkwareCrypto.verify(maxStarkKey, maxMsgHash.toString(16), {
+      verify(maxStarkKey, maxMsgHash.toString(16), {
         r: maxR,
         s: maxS.add(oneBn).add(oneBn)
       })
@@ -83,56 +77,32 @@ describe('Verify', () => {
 
   it('should not verify invalid signatures', () => {
     const privKey = generateRandomStarkPrivateKey();
-    const keyPair = starkwareCrypto.ec.keyFromPrivate(privKey, 'hex');
-    const keyPairPub = starkwareCrypto.ec.keyFromPublic(
-      keyPair.getPublic(),
-      'BN'
-    );
+    const keyPair = ec.keyFromPrivate(privKey, 'hex');
+    const keyPairPub = ec.keyFromPublic(keyPair.getPublic(), 'BN');
     const msgHash = new BN(randomHexString(61));
-    const msgSignature = starkwareCrypto.sign(keyPair, msgHash);
+    const msgSignature = sign(keyPair, msgHash);
 
     // Test invalid public key.
-    const invalidKeyPairPub = starkwareCrypto.ec.keyFromPublic(
+    const invalidKeyPairPub = ec.keyFromPublic(
       {x: keyPairPub.pub.getX().add(oneBn), y: keyPairPub.pub.getY()},
       'BN'
     );
-    expect(
-      starkwareCrypto.verify(
-        invalidKeyPairPub,
-        msgHash.toString(16),
-        msgSignature
-      )
-    ).to.be.false;
+    expect(verify(invalidKeyPairPub, msgHash.toString(16), msgSignature)).to.be
+      .false;
     // Test invalid message.
-    expect(
-      starkwareCrypto.verify(
-        keyPair,
-        msgHash.add(oneBn).toString(16),
-        msgSignature
-      )
-    ).to.be.false;
-    expect(
-      starkwareCrypto.verify(
-        keyPairPub,
-        msgHash.add(oneBn).toString(16),
-        msgSignature
-      )
-    ).to.be.false;
+    expect(verify(keyPair, msgHash.add(oneBn).toString(16), msgSignature)).to.be
+      .false;
+    expect(verify(keyPairPub, msgHash.add(oneBn).toString(16), msgSignature)).to
+      .be.false;
     // Test invalid r.
     msgSignature.r.iadd(oneBn);
-    expect(starkwareCrypto.verify(keyPair, msgHash.toString(16), msgSignature))
-      .to.be.false;
-    expect(
-      starkwareCrypto.verify(keyPairPub, msgHash.toString(16), msgSignature)
-    ).to.be.false;
+    expect(verify(keyPair, msgHash.toString(16), msgSignature)).to.be.false;
+    expect(verify(keyPairPub, msgHash.toString(16), msgSignature)).to.be.false;
     // Test invalid s.
     msgSignature.r.isub(oneBn);
     msgSignature.s.iadd(oneBn);
-    expect(starkwareCrypto.verify(keyPair, msgHash.toString(16), msgSignature))
-      .to.be.false;
-    expect(
-      starkwareCrypto.verify(keyPairPub, msgHash.toString(16), msgSignature)
-    ).to.be.false;
+    expect(verify(keyPair, msgHash.toString(16), msgSignature)).to.be.false;
+    expect(verify(keyPairPub, msgHash.toString(16), msgSignature)).to.be.false;
   });
 });
 
@@ -140,20 +110,21 @@ describe('Signature', () => {
   it('should sign all message hash lengths', () => {
     const privateKey =
       '2dccce1da22003777062ee0870e9881b460a8b7eca276870f57c601f182136c';
-    const keyPair = starkwareCrypto.ec.keyFromPrivate(privateKey, 'hex');
-    const publicKey = starkwareCrypto.ec.keyFromPublic(
-      keyPair.getPublic(true, 'hex'),
-      'hex'
-    );
+    const keyPair = ec.keyFromPrivate(privateKey, 'hex');
+    const publicKey = ec.keyFromPublic(keyPair.getPublic(true, 'hex'), 'hex');
 
-    function testSignature(msgHash, expectedR, expectedS) {
-      const msgSignature = starkwareCrypto.sign(keyPair, msgHash);
-      expect(starkwareCrypto.verify(publicKey, msgHash, msgSignature)).to.be
-        .true;
+    function testSignature(
+      msgHash: string,
+      expectedR: string,
+      expectedS: string
+    ) {
+      const msgSignature = sign(keyPair, msgHash);
+      expect(verify(publicKey, msgHash, msgSignature)).to.be.true;
       const {r, s} = msgSignature;
       expect(r.toString(16)).to.equal(expectedR);
       expect(s.toString(16)).to.equal(expectedS);
     }
+
     // Message hash of length 61.
     testSignature(
       'c465dd6b1bbffdb05442eb17f5ca38ad1aa78a6f56bf4415bdee219114a47',
@@ -191,7 +162,7 @@ describe('Pedersen Hash', () => {
       testData.hash_test.pedersen_hash_data_2
     ]) {
       expect(
-        starkwareCrypto.pedersen([
+        pedersen([
           hashTestData.input_1.substring(2),
           hashTestData.input_2.substring(2)
         ])
@@ -203,11 +174,11 @@ describe('Pedersen Hash', () => {
 describe('Signature Tests', () => {
   it('should create ecdsa deterministic signatures', () => {
     const privateKey = rfc6979TestData.private_key.substring(2);
-    const keyPair = starkwareCrypto.ec.keyFromPrivate(privateKey, 'hex');
+    const keyPair = ec.keyFromPrivate(privateKey, 'hex');
     let i = 0;
     for (; i < rfc6979TestData.messages.length; i++) {
       const msgHash = rfc6979TestData.messages[i].hash.substring(2);
-      const msgSignature = starkwareCrypto.sign(keyPair, msgHash);
+      const msgSignature = sign(keyPair, msgHash);
       const {r, s} = msgSignature;
       expect(r.toString(10)).to.equal(rfc6979TestData.messages[i].r);
       expect(s.toString(10)).to.equal(rfc6979TestData.messages[i].s);

@@ -1,7 +1,5 @@
 {
   "globals": {
-    "SRC_DIR_PATH": true,
-    "CONFIG_DIR_PATH": true,
     "expect": true
   },
   "env": {

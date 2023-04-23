@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import BN from 'bn.js';
-import encUtils from 'enc-utils';
+import * as encUtils from 'enc-utils';
 import sha3 from 'js-sha3';
 import {AssetDict} from './types';
 
