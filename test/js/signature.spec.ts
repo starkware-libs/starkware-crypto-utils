@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import {ec, sign, verify, pedersen, maxEcdsaVal} from '../../src/js/signature';
 import rfc6979TestData from '../config/rfc6979_signature_test_vector.json';

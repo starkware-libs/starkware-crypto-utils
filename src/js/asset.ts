@@ -68,7 +68,7 @@ function getAssetType(assetDict: AssetDict) {
   assetInfo = assetInfo.ushln(256).add(quantum);
   expectedLen += 64;
 
-  let assetEncoded = sha3.keccak_256(
+  const assetEncoded = sha3.keccak_256(
     encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
   );
   let assetType = new BN(assetEncoded, 16);
@@ -117,7 +117,7 @@ function getAssetId(assetDict: AssetDict) {
     assetInfo = assetInfo
       .ushln(256)
       .add(new BN(parseInt(assetDict.data.tokenId as string), 16));
-    let assetEncoded = sha3.keccak_256(
+    const assetEncoded = sha3.keccak_256(
       encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
     );
     assetId = new BN(assetEncoded, 16);
@@ -139,7 +139,7 @@ function getAssetId(assetDict: AssetDict) {
     assetInfo = assetInfo
       .ushln(256)
       .add(new BN(encUtils.removeHexPrefix(blobHash), 16));
-    let assetEncoded = sha3.keccak_256(
+    const assetEncoded = sha3.keccak_256(
       encUtils.hexToBuffer(addLeadingZeroes(assetInfo.toJSON(), expectedLen))
     );
     assetId = new BN(assetEncoded, 16);

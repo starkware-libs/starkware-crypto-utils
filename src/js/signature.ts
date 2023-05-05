@@ -52,6 +52,7 @@ const starkEc = new EllipticCurve(
   new eCurves.PresetCurve({
     type: 'short',
     prime: null,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     p: prime,
     a: '00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001',
@@ -236,8 +237,8 @@ function hashLimitOrderMsgWithFee(
 function getLimitOrderMsgHash(
   vaultSell: number,
   vaultBuy: number,
-  amountSell: number,
-  amountBuy: number,
+  amountSell: string,
+  amountBuy: string,
   tokenSell: string,
   tokenBuy: string,
   nonce: number,
@@ -291,15 +292,15 @@ function getLimitOrderMsgHash(
 function getLimitOrderMsgHashWithFee(
   vaultSell: number,
   vaultBuy: number,
-  amountSell: number,
-  amountBuy: number,
+  amountSell: string,
+  amountBuy: string,
   tokenSell: string,
   tokenBuy: string,
   nonce: number,
   expirationTimestamp: number,
   feeToken: string,
   feeVaultId: number,
-  feeLimit: number
+  feeLimit: string
 ) {
   assert(
     hasHexPrefix(tokenSell) && hasHexPrefix(tokenBuy),
@@ -364,7 +365,7 @@ function getLimitOrderMsgHashWithFee(
  condition - uint256 field element strictly less than the prime (as hex string with 0x)
  */
 function getTransferMsgHash(
-  amount: number,
+  amount: string,
   nonce: number,
   senderVaultId: number,
   token: string,
@@ -424,7 +425,7 @@ function getTransferMsgHash(
  feeToken - uint256 field element strictly less than the prime (as hex string with 0x)
  */
 function getTransferMsgHashWithFee(
-  amount: number,
+  amount: string,
   nonce: number,
   senderVaultId: number,
   token: string,
@@ -433,7 +434,7 @@ function getTransferMsgHashWithFee(
   expirationTimestamp: number,
   feeToken: string,
   feeVaultId: number,
-  feeLimit: number,
+  feeLimit: string,
   condition: string | null = null
 ) {
   assert(
