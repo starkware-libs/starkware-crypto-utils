@@ -195,5 +195,6 @@ function blobToBlobHash(blob: string) {
 
 export {
   getAssetType,
+  getAssetSelector,
   getAssetId // Function.
 };
