@@ -1,3 +1,11 @@
+## [0.1.0](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.0.2...v0.1.0) (2023-05-07)
+
+
+### 🧩 Features
+
+* exporting getAssetSelector function ([#8](https://github.com/starkware-libs/starkware-crypto-utils/issues/8)) ([1a945b2](https://github.com/starkware-libs/starkware-crypto-utils/commit/1a945b2ffbdf56c68bb7606c45341c9d117422ad))
+* typescript support ([#10](https://github.com/starkware-libs/starkware-crypto-utils/issues/10)) ([bcdb84b](https://github.com/starkware-libs/starkware-crypto-utils/commit/bcdb84b829897af809886e60a3fe284e1dde1eae))
+
 ## [0.1.0-dev.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.0.1...v0.1.0-dev.1) (2023-05-07)
 
 
