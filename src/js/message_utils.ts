@@ -14,15 +14,21 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-const assert = require('assert');
+import assert from 'assert';
+import BN from 'bn.js';
 
-/*
+/**
  Asserts input is equal to or greater than lowerBound and lower than upperBound.
  Assert message specifies inputName.
  input, lowerBound, and upperBound should be of type BN.
  inputName should be a string.
 */
-function assertInRange(input, lowerBound, upperBound, inputName = '') {
+function assertInRange(
+  input: BN,
+  lowerBound: BN,
+  upperBound: BN,
+  inputName = ''
+) {
   const messageSuffix =
     inputName === '' ? 'invalid length' : `invalid ${inputName} length`;
   assert(
@@ -32,20 +38,17 @@ function assertInRange(input, lowerBound, upperBound, inputName = '') {
 }
 
 class Range {
-  constructor(lowerBound, upperBound) {
-    this.lowerBound = lowerBound;
-    this.upperBound = upperBound;
-  }
+  constructor(public lowerBound: BN, public upperBound: BN) {}
 }
 
-/*
+/**
  Asserts that the input is within [lowerBound, upperBound) in at least one of the given ranges.
  Assert message specifies inputName.
  input should be of type BN.
  ranges should be a vector of Range objects.
  inputName should be a string.
 */
-function assertInMultiRange(input, ranges, inputName = '') {
+function assertInMultiRange(input: BN, ranges: Range[], inputName = '') {
   const messageSuffix =
     inputName === '' ? 'invalid length' : `invalid ${inputName} length`;
   for (let i = 0; i < ranges.length; i++) {
@@ -56,7 +59,7 @@ function assertInMultiRange(input, ranges, inputName = '') {
   assert(false, `Message not signable, ${messageSuffix}.`);
 }
 
-module.exports = {
+export {
   Range, // Class.
   assertInRange,
   assertInMultiRange // Function.

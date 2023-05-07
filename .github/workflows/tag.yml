@@ -10,48 +10,23 @@ jobs:
     name: Creating a release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.USER_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install node_modules
-        run: yarn
-
-      - name: Extract release data
-        id: get-release-data
-        run: |
-          echo "::set-output name=tag::${GITHUB_REF##*/}"
-          echo "::set-output name=file::${GITHUB_REPOSITORY#*/}-${GITHUB_REF##*/}"
-
-      - name: Zip artifacts
-        run: zip -r ${{ steps.get-release-data.outputs.file }}.zip package.json README.md CHANGELOG.md src/config src/js
-
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.USER_TOKEN }}
-          tag_name: ${{ steps.get-release-data.outputs.tag }}
-          prerelease: ${{ contains(steps.get-release-data.outputs.tag, '-') }}
-          generate_release_notes: true
-          draft: false
-          files: |
-            ${{ steps.get-release-data.outputs.file }}.zip
-
-  publish:
-    name: Publish Package to npmjs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Setup node
+        uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://registry.npmjs.org/'
           scope: '@starkware-industries'
-      - run: npm publish --access public
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build project 🔧
+        run: yarn run build
+
+      - name: Publish package on NPM 📦
+        run: yarn npm-publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
