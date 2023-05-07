@@ -1,6 +1,6 @@
 {
   "name": "@starkware-industries/starkware-crypto-utils",
-  "version": "0.0.2-1",
+  "version": "0.0.3-dev.1",
   "description": "Signatures, keys and Pedersen hash on STARK friendly elliptic curve",
   "keywords": [
     "stark",
@@ -38,10 +38,9 @@
     "format": "prettier --write \"**/*.+(ts|js|json|md|html|yml)\"",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "pre-release": "standard-version --prerelease --skip.changelog --releaseCommitMessageFormat 'chore(prerelease): {{currentTag}}'",
-    "pushTaggedRelease": "git push --follow-tags --no-verify origin master",
-    "release": "standard-version",
-    "release:dry": "standard-version --dry-run",
+    "npm-publish": "npm publish --access public",
+    "release": "semantic-release",
+    "release:dry": "semantic-release --no-ci --dry-run",
     "test": "tsc --build && mocha 'dist/test/**/*.spec.js' --recursive"
   },
   "dependencies": {
@@ -59,6 +58,11 @@
     "minimalistic-crypto-utils": "^1.0.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/commit-analyzer": "^9.0.1",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.2",
     "@types/bn.js": "^5.1.1",
     "@types/chai": "^4.3.4",
     "@types/elliptic": "^6.4.14",
@@ -66,12 +70,13 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "chai": "^4.3.7",
+    "conventional-changelog-conventionalcommits": "^4.6.3",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^10.2.0",
     "prettier": "^2.8.7",
-    "standard-version": "^9.3.2",
+    "semantic-release": "^19.0.5",
     "typedoc": "^0.23.16",
     "typescript": "^4.8.4"
   }
