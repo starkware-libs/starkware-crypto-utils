@@ -14,7 +14,8 @@
 // and limitations under the License.                                          //
 /////////////////////////////////////////////////////////////////////////////////
 
-const starkwareCrypto = require('./signature.js');
+/* eslint @typescript-eslint/no-var-requires: 0 */
+const starkwareCrypto = require('../../dist/src/js');
 const assert = require('assert');
 const testData = require('../../test/config/signature_test_data.json');
 

@@ -1,0 +1,11 @@
+{
+  "entryPoints": [
+    "./src/js/asset.ts",
+    "./src/js/index.ts",
+    "./src/js/key_derivation.ts",
+    "./src/js/message_utils.ts",
+    "./src/js/signature.ts"
+  ],
+  "name": "StarkWare Crypto Utils",
+  "includeVersion": true
+}
