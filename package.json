@@ -24,6 +24,8 @@
   "types": "dist/src/js/index.d.ts",
   "files": [
     "dist",
+    "src/config",
+    "src/js",
     "package.json",
     "README.md",
     "CHANGELOG.md"
