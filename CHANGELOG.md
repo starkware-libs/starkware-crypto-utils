@@ -1,3 +1,10 @@
+### [0.1.1-dev.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.0...v0.1.1-dev.1) (2023-05-15)
+
+
+### 📚 Docs
+
+* fixed URL to Pedersen hash documentation ([#15](https://github.com/starkware-libs/starkware-crypto-utils/issues/15)) ([23f09b4](https://github.com/starkware-libs/starkware-crypto-utils/commit/23f09b44369a58d2f9169291e103e33cb99ace52))
+
 ## [0.1.0](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.0.2...v0.1.0) (2023-05-07)
 
 
