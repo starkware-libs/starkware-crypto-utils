@@ -1,3 +1,10 @@
+### [0.1.1-dev.2](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.1-dev.1...v0.1.1-dev.2) (2023-08-13)
+
+
+### 🔧 Fixes
+
+* use ESM export from index file ([01e5c58](https://github.com/starkware-libs/starkware-crypto-utils/commit/01e5c58b09b46bac6c4b832b4a8a8601f6075db0))
+
 ### [0.1.1-dev.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.0...v0.1.1-dev.1) (2023-05-15)
 
 
