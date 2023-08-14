@@ -1,3 +1,20 @@
+## [0.2.0](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.0...v0.2.0) (2023-08-14)
+
+
+### 📚 Docs
+
+* fixed URL to Pedersen hash documentation ([#15](https://github.com/starkware-libs/starkware-crypto-utils/issues/15)) ([23f09b4](https://github.com/starkware-libs/starkware-crypto-utils/commit/23f09b44369a58d2f9169291e103e33cb99ace52))
+
+
+### 🔧 Fixes
+
+* use ESM export from index file ([01e5c58](https://github.com/starkware-libs/starkware-crypto-utils/commit/01e5c58b09b46bac6c4b832b4a8a8601f6075db0))
+
+
+### 🧩 Features
+
+* polyfill node core modules ([#16](https://github.com/starkware-libs/starkware-crypto-utils/issues/16)) ([ee6290c](https://github.com/starkware-libs/starkware-crypto-utils/commit/ee6290cee5aaca92d24ce80e3c1d0f9e4ee736a6))
+
 ## [0.2.0-dev.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.1-dev.2...v0.2.0-dev.1) (2023-08-14)
 
 
