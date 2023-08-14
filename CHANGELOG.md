@@ -1,3 +1,10 @@
+## [0.2.0-dev.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.1-dev.2...v0.2.0-dev.1) (2023-08-14)
+
+
+### 🧩 Features
+
+* polyfill node core modules ([#16](https://github.com/starkware-libs/starkware-crypto-utils/issues/16)) ([ee6290c](https://github.com/starkware-libs/starkware-crypto-utils/commit/ee6290cee5aaca92d24ce80e3c1d0f9e4ee736a6))
+
 ### [0.1.1-dev.2](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.1-dev.1...v0.1.1-dev.2) (2023-08-13)
 
 
