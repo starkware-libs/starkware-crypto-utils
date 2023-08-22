@@ -94,7 +94,7 @@ function pedersen(input: Array<string>) {
       if (x.and(oneBn).toNumber() !== 0) {
         point = point.add(pt);
       }
-      x = x.shrn(1);
+      x.iushrn(1);
     }
   }
   return point.getX().toString(16);
