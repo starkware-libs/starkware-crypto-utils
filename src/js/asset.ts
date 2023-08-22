@@ -181,12 +181,8 @@ function getAssetSelector(assetDictType: string) {
  Adds leading zeroes to the input hex-string to complement the expected length.
 */
 function addLeadingZeroes(hexStr: string, expectedLen: number) {
-  let res = hexStr;
-  assert(res.length <= expectedLen);
-  while (res.length < expectedLen) {
-    res = '0' + res;
-  }
-  return res;
+  assert(hexStr.length <= expectedLen);
+  return hexStr.padStart(expectedLen, '0');
 }
 
 function blobToBlobHash(blob: string) {
