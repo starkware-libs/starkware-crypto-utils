@@ -86,7 +86,7 @@ function hasHexPrefix(str: string) {
 function pedersen(input: Array<string>) {
   let point = shiftPoint;
   for (let i = 0; i < input.length; i++) {
-    let x = new BN(input[i], 16);
+    const x = new BN(input[i], 16);
     assert(x.gte(zeroBn) && x.lt(prime), 'Invalid input: ' + input[i]);
     for (let j = 0; j < 252; j++) {
       const pt = constantPoints[2 + i * 252 + j];
@@ -94,7 +94,7 @@ function pedersen(input: Array<string>) {
       if (x.and(oneBn).toNumber() !== 0) {
         point = point.add(pt);
       }
-      x = x.shrn(1);
+      x.iushrn(1);
     }
   }
   return point.getX().toString(16);
