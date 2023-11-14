@@ -1,3 +1,10 @@
+### [0.2.1-dev.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.2.0...v0.2.1-dev.1) (2023-11-14)
+
+
+### 🔧 Fixes
+
+* require from module's root returns an empty object. ([#20](https://github.com/starkware-libs/starkware-crypto-utils/issues/20)) ([e141e88](https://github.com/starkware-libs/starkware-crypto-utils/commit/e141e886986864fbb9ac2b1cb69f07af05afe47d))
+
 ## [0.2.0](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.1.0...v0.2.0) (2023-08-14)
 
 
