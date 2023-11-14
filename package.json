@@ -1,6 +1,6 @@
 {
   "name": "@starkware-industries/starkware-crypto-utils",
-  "version": "0.2.0",
+  "version": "0.2.1-dev.1",
   "description": "Signatures, keys and Pedersen hash on STARK friendly elliptic curve",
   "keywords": [
     "stark",
@@ -20,8 +20,9 @@
   },
   "license": "Apache-2.0",
   "author": "StarkWare Industries Ltd.",
-  "main": "dist/index.js",
-  "types": "dist/types/src/js/index.d.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/index.d.ts",
   "files": [
     "dist",
     "src/config",
@@ -32,7 +33,7 @@
   ],
   "scripts": {
     "prebuild": "npm run clean",
-    "build": "webpack --mode production",
+    "build": "vite build",
     "clean": "rm -rf ./dist",
     "dev": "webpack-dev-server --mode development",
     "docs:generate": "typedoc",
@@ -82,13 +83,11 @@
     "mocha": "^10.2.0",
     "prettier": "^2.8.7",
     "semantic-release": "^19.0.5",
-    "terser-webpack-plugin": "^5.3.9",
     "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
     "typedoc": "^0.23.16",
     "typescript": "^4.8.4",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "vite": "^4.5.0",
+    "vite-plugin-dts": "^3.6.3"
   }
 }
