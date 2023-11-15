@@ -1,3 +1,15 @@
+### [0.2.1](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.2.0...v0.2.1) (2023-11-15)
+
+
+### 🔧 Fixes
+
+* require from module's root returns an empty object. ([#20](https://github.com/starkware-libs/starkware-crypto-utils/issues/20)) ([e141e88](https://github.com/starkware-libs/starkware-crypto-utils/commit/e141e886986864fbb9ac2b1cb69f07af05afe47d))
+
+
+### 💉 Improvements
+
+* optimize `pedersen` function ([#17](https://github.com/starkware-libs/starkware-crypto-utils/issues/17)) ([c73ee56](https://github.com/starkware-libs/starkware-crypto-utils/commit/c73ee565a865b88564441e21d64332478dca2455))
+
 ### [0.2.1-dev.2](https://github.com/starkware-libs/starkware-crypto-utils/compare/v0.2.1-dev.1...v0.2.1-dev.2) (2023-11-14)
 
 
