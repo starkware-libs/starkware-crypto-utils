@@ -77,7 +77,7 @@ const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 ### Signing a StarkEx order
 
 ```javascript
-const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
+const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 const testData = require('test/config/signature_test_data.json');
 
 const privateKey = testData.meta_data.party_a_order.private_key.substring(2);
@@ -135,7 +135,7 @@ console.log('\n');
 ### StarkEx key serialization
 
 ```javascript
-const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
+const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 
 const pubXStr = publicKey.pub.getX().toString('hex');
 const pubYStr = publicKey.pub.getY().toString('hex');
@@ -200,7 +200,7 @@ console.log('\n');
 ### StarkEx transfer
 
 ```javascript
-const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
+const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 const testData = require('test/config/signature_test_data.json');
 
 const privateKey = testData.meta_data.transfer_order.private_key.substring(2);
@@ -243,7 +243,7 @@ console.log('\n');
 ### StarkEx conditional transfer
 
 ```javascript
-const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
+const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 const testData = require('test/config/signature_test_data.json');
 
 const privateKey =
@@ -389,7 +389,7 @@ console.log('\n');
 ### Adding a matching order to create a settlement
 
 ```javascript
-const starkwareCrypto = require('@starkware-libs/starkware-crypto-utils');
+const starkwareCrypto = require('@starkware-industries/starkware-crypto-utils');
 const testData = require('test/config/signature_test_data.json');
 
 const privateKey = testData.meta_data.party_b_order.private_key.substring(2);
